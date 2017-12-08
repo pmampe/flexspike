@@ -19,7 +19,8 @@ class SysAdminService {
       java.sql.PreparedStatement statement = null
       java.sql.ResultSet resultSet = null
       try {
-          connection = java.sql.DriverManager.getConnection(jdbcurl, jdbcuser, jdbcpassword)
+    /*
+            connection = java.sql.DriverManager.getConnection(jdbcurl, jdbcuser, jdbcpassword)
           User.findAllByEppnIsNotNull([sort: 'eppn', order: 'asc']).each { User user ->
               statement = connection.prepareStatement("select datum, abslength, absstart, comment from absence where uid=? order by datum;", ResultSet.FETCH_FORWARD, ResultSet.CONCUR_READ_ONLY)
               statement.setString(1, user.getUid())
@@ -40,7 +41,8 @@ class SysAdminService {
                   absence.save(flush: true, failOnError: true)
               }
           }
-      } catch (Throwable exception) {
+*/
+        } catch (Throwable exception) {
           log.info "Problem accessing old database: ${exception.getMessage()}"
       } finally {
           if(resultSet) {
@@ -301,7 +303,7 @@ class SysAdminService {
       java.sql.ResultSet resultSet = null
       try {
           connection = java.sql.DriverManager.getConnection(jdbcurl, jdbcuser, jdbcpassword)
-          statement = connection.prepareStatement("select distinct(uid) from reportedtime time where datum>=curdate()-731 order by uid;", ResultSet.FETCH_FORWARD, ResultSet.CONCUR_READ_ONLY)
+          statement = connection.prepareStatement("select distinct(uid) from reportedtime time where datum>=curdate()-31 order by uid;", ResultSet.FETCH_FORWARD, ResultSet.CONCUR_READ_ONLY)
           resultSet = statement.executeQuery()
           while(resultSet.next()) {
               String uid = resultSet.getString("uid")

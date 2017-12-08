@@ -1,6 +1,6 @@
 package se.metricspace.flex
 
-class Absence {
+class Absent {
     String comment
     Date dateCreated
     FlexDate flexDate

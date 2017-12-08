@@ -3,7 +3,7 @@ package se.metricspace.flex
 import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
 
-class AbsenceSpec extends Specification implements DomainUnitTest<Absence> {
+class AbsentSpec extends Specification implements DomainUnitTest<Absence> {
 
     def setup() {
     }
