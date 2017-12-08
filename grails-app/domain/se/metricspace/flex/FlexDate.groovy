@@ -20,4 +20,12 @@ class FlexDate {
     startHour(nullable: false)
     updatedByEppn(nullable: true, blank: true)
   }
+
+  boolean after(FlexDate flexDate) {
+    return (date == flexDate.date || date.after(flexDate.date))
+  }
+
+  boolean before(FlexDate flexDate) {
+    return (date == flexDate.date || date.before(flexDate.date))
+  }
 }

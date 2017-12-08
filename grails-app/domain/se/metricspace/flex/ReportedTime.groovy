@@ -9,6 +9,7 @@ class ReportedTime {
   int endTime = 0 // minutes since midnight
   FlexDate flexDate
   Date lastUpdated
+  int lunchLength
   int startTime = 0 // minutes since midnight
   User user
   WorkRate workRate

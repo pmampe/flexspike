@@ -172,6 +172,10 @@ databaseChangeLog = {
         constraints(nullable: "false")
       }
 
+      column(name: "lunch_length", type: "integer") {
+        constraints(nullable: "true")
+      }
+
       column(name: "start_time", type: "integer") {
         constraints(nullable: "true")
       }

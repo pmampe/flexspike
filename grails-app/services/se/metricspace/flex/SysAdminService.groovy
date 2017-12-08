@@ -93,19 +93,20 @@ class SysAdminService {
                     int absentAllDay = resultSet.getInt('absentallday')
                     String comment = resultSet.getString('comment')
                     FlexDate flexDate = FlexDate.findByDate(date)
-                    WorkRate workRate = WorkRate.findByUserAndStartDateLessThanEqualsAndEndDateGreaterThanEquals(user, date, date)
+                    WorkRate workRate = WorkRate.findForUserAndDate(user, date)
                     ReportedTime reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)
                     if(!reportedTime) {
                         reportedTime = ReportedTime.newInstance(user: user, flexDate: flexDate)
                     }
-                    reportedTime.absentAllDay(absentAllDay>0)
+                    reportedTime.absentAllDay=(absentAllDay>0)
                     reportedTime.comment = comment
                     reportedTime.dailyDelta = dailyDelta
                     reportedTime.dailyTotal = dailyTotal
                     reportedTime.endTime = endHour*60+endMinute
                     reportedTime.startTime = startHour*60+startMinute
+                    reportedTime.lunchLength = lunchLength
                     reportedTime.workRate = workRate
-                    reportedTime.save(flush: true, failOnError)
+                    reportedTime.save(flush: true, failOnError: true)
                 }
             } finally {
                 if(resultSet) {

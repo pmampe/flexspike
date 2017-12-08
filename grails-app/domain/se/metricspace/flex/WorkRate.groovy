@@ -22,4 +22,29 @@ class WorkRate {
     startDate(nullable: true)
     user(nullable: false)
   }
+
+  static WorkRate findForUserAndDate(User user, Date date) {
+    WorkRate workRate = null
+    FlexDate flexDate = FlexDate.findByDate(date)
+    WorkRate.findAllByUser(user).each { WorkRate wr ->
+      if(wr.startDate && wr.startDate.before(flexDate)) {
+        if(wr.endDate) {
+          if(wr.endDate.after(flexDate)) {
+            workRate = wr
+          }
+        } else {
+          workRate = wr
+        }
+      } else {
+        if(wr.endDate) {
+          if(wr.endDate.after(flexDate)) {
+            workRate = wr
+          }
+        } else {
+          workRate = wr
+        }
+      }
+    }
+    return workRate
+  }
 }
