@@ -21,13 +21,23 @@ class SysAdminDashboardController {
     return redirect(action: 'index')
   }
 
+  def initTimeAdjustmentsFromOldSystem() {
+    sysAdminService.loadTimeAdjustmentsFromOldSystem()
+    return redirect(action: 'index')
+  }
+
   def initUsersFromOldSystem() {
-      sysAdminService.loadUsersFromOldSystem()
-      return redirect(action: 'index')
+        sysAdminService.loadUsersFromOldSystem()
+        return redirect(action: 'index')
   }
 
   def initWorkRatesFromOldSystem() {
       sysAdminService.loadWorkRatesFromOldSystem()
       return redirect(action: 'index')
+  }
+
+  def triggerInitJob() {
+    LoadFromOldSystemJob.triggerNow([:])
+    return redirect(action: 'index')
   }
 }

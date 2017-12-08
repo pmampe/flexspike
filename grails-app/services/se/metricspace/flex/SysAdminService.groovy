@@ -1,10 +1,14 @@
 package se.metricspace.flex
 
 import grails.core.GrailsApplication
+import groovy.sql.Sql
+
+import javax.sql.DataSource
 import java.sql.DriverManager
 import java.sql.ResultSet
 
 class SysAdminService {
+  DataSource dataSource
   GrailsApplication grailsApplication
 
   void loadAbsencesFromOldSystem() {
@@ -206,6 +210,86 @@ class SysAdminService {
             connection = null
         }
     }
+  }
+
+  void loadTimeAdjustmentsFromOldSystem() {
+      String jdbcurl = grailsApplication.config.oldsuflex.jdbcurl
+      String jdbcuser = grailsApplication.config.oldsuflex.jdbcuser
+      String jdbcpassword = grailsApplication.config.oldsuflex.jdbcpassword
+      java.sql.Connection connection = null
+      java.sql.PreparedStatement statement = null
+      java.sql.ResultSet resultSet = null
+      try {
+          connection = java.sql.DriverManager.getConnection(jdbcurl, jdbcuser, jdbcpassword)
+          User.findAllByEppnIsNotNull([sort: 'eppn', order: 'asc']).each { User user ->
+              try {
+                  statement = connection.prepareStatement("select * from timeadjustments where uid = ? order by datum;", ResultSet.FETCH_FORWARD, ResultSet.CONCUR_READ_ONLY)
+                  statement.setString(1, user.getUid())
+                  resultSet = statement.executeQuery()
+                  TimeAdjustment.findAllByUser(user)*.delete(flush: true)
+                  while(resultSet.next()) {
+                      Date date = resultSet.getDate('datum')
+                      int delta = resultSet.getInt('delta')
+                      String comment = resultSet.getString('comment')
+                      Sql sql = null
+                      try {
+                          sql = Sql.newInstance(dataSource)
+                          sql.execute("insert into time_adjustment(version, date_created, comment, delta, user_id) values(1, ${date}, ${(comment?.trim())?: ''}, ${delta}, ${user.id});")
+                      } catch(Throwable exception) {
+                          log.warn "Some problems handling TimeAdjustments: ${exception.getMessage()}"
+                      } finally {
+                          if(sql) {
+                              try {
+                                  sql.close()
+                              } catch(Throwable exception) {
+                              }
+                              sql = null
+                          }
+                      }
+
+                  }
+              } finally {
+                  if(resultSet) {
+                      try {
+                          resultSet.close()
+                      } catch (Throwable exception) {
+                      }
+                      resultSet = null
+                  }
+                  if(statement) {
+                      try {
+                          statement.close()
+                      } catch (Throwable exception) {
+                      }
+                      statement = null
+                  }
+              }
+          }
+      } catch (Throwable exception) {
+          log.info "Problem accessing old database: ${exception.getMessage()}"
+      } finally {
+          if(resultSet) {
+              try {
+                  resultSet.close()
+              } catch (Throwable exception) {
+              }
+              resultSet = null
+          }
+          if(statement) {
+              try {
+                  statement.close()
+              } catch (Throwable exception) {
+              }
+              statement = null
+          }
+          if(connection) {
+              try {
+                  connection.close()
+              } catch (Throwable exception) {
+              }
+              connection = null
+          }
+      }
   }
 
   void loadUsersFromOldSystem() {

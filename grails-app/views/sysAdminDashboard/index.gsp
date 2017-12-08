@@ -20,9 +20,11 @@
                        <tr><td>WorkRate</td><td>${se.metricspace.flex.WorkRate.count()}</td><td><g:formatDate date="${se.metricspace.flex.WorkRate.findByLastUpdatedIsNotNull([sort: 'lastUpdated', order: 'desc', max: 1])?.lastUpdated}" format="yyyy-MM-dd HH:mm"/></td><td><g:link action="initWorkRatesFromOldSystem" title="update">Update</g:link></td></tr>
                        <tr><td>ReportedTime</td><td>${se.metricspace.flex.ReportedTime.count()}</td><td><g:formatDate date="${se.metricspace.flex.ReportedTime.findByLastUpdatedIsNotNull([sort: 'lastUpdated', order: 'desc', max: 1])?.lastUpdated}" format="yyyy-MM-dd HH:mm"/></td><td><g:link action="initReportedTimesFromOldSystem" title="update">Update</g:link></td></tr>
                        <tr><td>Absence</td><td>${se.metricspace.flex.Absence.count()}</td><td><g:formatDate date="${se.metricspace.flex.Absence.findByLastUpdatedIsNotNull([sort: 'lastUpdated', order: 'desc', max: 1])?.lastUpdated}" format="yyyy-MM-dd HH:mm"/></td><td><g:link action="initAbsencesFromOldSystem" title="update">Update</g:link></td></tr>
+                       <tr><td>TimeAdjustment</td><td>${se.metricspace.flex.TimeAdjustment.count()}</td><td><g:formatDate date="${se.metricspace.flex.TimeAdjustment.findByDateCreatedIsNotNull([sort: 'dateCreated', order: 'desc', max: 1])?.dateCreated}" format="yyyy-MM-dd HH:mm"/></td><td><g:link action="initTimeAdjustmentsFromOldSystem" title="update">Update</g:link></td></tr>
                     </tbody>
                     <tfoot><tr><th>Namn</th><th>Antal</th><th>LastUpdated</th><th>Update</th></tr></tfoot>
                 </table>
+                <p><g:link action="triggerInitJob" title="trigger-job">Trigger Job</g:link></p>
             </div>
         </div>
     </body>

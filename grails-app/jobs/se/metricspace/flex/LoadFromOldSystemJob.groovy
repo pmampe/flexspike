@@ -17,5 +17,6 @@ class LoadFromOldSystemJob {
         sysAdminService.loadWorkRatesFromOldSystem()
         sysAdminService.loadReportedTimesFromOldSystem()
         sysAdminService.loadAbsencesFromOldSystem()
+        sysAdminService.loadTimeAdjustmentsFromOldSystem()
     }
 }
