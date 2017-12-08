@@ -15,4 +15,9 @@ class SysAdminDashboardController {
       sysAdminService.loadUsersFromOldSystem()
       return redirect(action: 'index')
   }
+
+  def initWorkRatesFromOldSystem() {
+      sysAdminService.loadWorkRatesFromOldSystem()
+      return redirect(action: 'index')
+  }
 }
