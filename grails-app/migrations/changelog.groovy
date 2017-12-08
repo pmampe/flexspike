@@ -179,11 +179,16 @@ databaseChangeLog = {
       column(name: "user_id", type: "bigint") {
         constraints(nullable: "false")
       }
+
+      column(name: "work_rate_id", type: "bigint") {
+        constraints(nullable: "true")
+      }
     }
   }
 
   changeSet(author: "mange", id: "1448278733528-6") {
     addForeignKeyConstraint(baseColumnNames: "flex_date_id", baseTableName: "reported_time", constraintName: "rt2fdFK", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "flex_date", referencesUniqueColumn: "true")
     addForeignKeyConstraint(baseColumnNames: "user_id", baseTableName: "reported_time", constraintName: "rt2uFK", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "user", referencesUniqueColumn: "true")
+    addForeignKeyConstraint(baseColumnNames: "work_rate_id", baseTableName: "reported_time", constraintName: "rt2wrFK", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "user", referencesUniqueColumn: "true")
   }
 }

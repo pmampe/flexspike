@@ -11,6 +11,11 @@ class SysAdminDashboardController {
       return redirect(action: 'index')
   }
 
+  def initReportedTimesFromOldSystem() {
+    sysAdminService.loadReportedTimesFromOldSystem()
+    return redirect(action: 'index')
+  }
+
   def initUsersFromOldSystem() {
       sysAdminService.loadUsersFromOldSystem()
       return redirect(action: 'index')

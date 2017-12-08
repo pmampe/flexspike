@@ -2,6 +2,7 @@ package se.metricspace.flex
 
 import grails.core.GrailsApplication
 import java.sql.DriverManager
+import java.sql.ResultSet
 
 class SysAdminService {
   GrailsApplication grailsApplication
@@ -15,7 +16,7 @@ class SysAdminService {
       java.sql.ResultSet resultSet = null
       try {
           connection = java.sql.DriverManager.getConnection(jdbcurl, jdbcuser, jdbcpassword)
-          statement = connection.prepareStatement("select * from calendar order by datum;")
+          statement = connection.prepareStatement("select * from calendar order by datum;", ResultSet.FETCH_FORWARD, ResultSet.CONCUR_READ_ONLY)
           resultSet = statement.executeQuery()
           while(resultSet.next()) {
               Date date = resultSet.getDate("datum")
@@ -65,6 +66,91 @@ class SysAdminService {
       }
   }
 
+  void loadReportedTimesFromOldSystem() {
+    String jdbcurl = grailsApplication.config.oldsuflex.jdbcurl
+    String jdbcuser = grailsApplication.config.oldsuflex.jdbcuser
+    String jdbcpassword = grailsApplication.config.oldsuflex.jdbcpassword
+    java.sql.Connection connection = null
+    java.sql.PreparedStatement statement = null
+    java.sql.ResultSet resultSet = null
+    try {
+        connection = java.sql.DriverManager.getConnection(jdbcurl, jdbcuser, jdbcpassword)
+        User.findAllByEppnIsNotNull([sort: 'eppn', order: 'asc']).each { User user ->
+            try {
+                statement = connection.prepareStatement("select * from reportedtime where uid = ? order by datum;", ResultSet.FETCH_FORWARD, ResultSet.CONCUR_READ_ONLY)
+                statement.setString(1, user.getUid())
+                resultSet = statement.executeQuery()
+                while(resultSet.next()) {
+                    Date date = resultSet.getDate('datum')
+                    String uid = resultSet.getString('uid')
+                    int startHour = resultSet.getInt('starthour')
+                    int startMinute = resultSet.getInt('startminute')
+                    int endHour = resultSet.getInt('endhour')
+                    int endMinute = resultSet.getInt('endminute')
+                    int lunchLength = resultSet.getInt('lunchlength')
+                    int dailyDelta = resultSet.getInt('dailydelta')
+                    int dailyTotal = resultSet.getInt('dailytotal')
+                    int absentAllDay = resultSet.getInt('absentallday')
+                    String comment = resultSet.getString('comment')
+                    FlexDate flexDate = FlexDate.findByDate(date)
+                    WorkRate workRate = WorkRate.findByUserAndStartDateLessThanEqualsAndEndDateGreaterThanEquals(user, date, date)
+                    ReportedTime reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)
+                    if(!reportedTime) {
+                        reportedTime = ReportedTime.newInstance(user: user, flexDate: flexDate)
+                    }
+                    reportedTime.absentAllDay(absentAllDay>0)
+                    reportedTime.comment = comment
+                    reportedTime.dailyDelta = dailyDelta
+                    reportedTime.dailyTotal = dailyTotal
+                    reportedTime.endTime = endHour*60+endMinute
+                    reportedTime.startTime = startHour*60+startMinute
+                    reportedTime.workRate = workRate
+                    reportedTime.save(flush: true, failOnError)
+                }
+            } finally {
+                if(resultSet) {
+                    try {
+                        resultSet.close()
+                    } catch (Throwable exception) {
+                    }
+                    resultSet = null
+                }
+                if(statement) {
+                    try {
+                        statement.close()
+                    } catch (Throwable exception) {
+                    }
+                    statement = null
+                }
+            }
+        }
+    } catch(Throwable exception) {
+        log.info "Problem accessing old database: ${exception.getMessage()}"
+    } finally {
+        if(resultSet) {
+            try {
+                resultSet.close()
+            } catch (Throwable exception) {
+            }
+            resultSet = null
+        }
+        if(statement) {
+            try {
+                statement.close()
+            } catch (Throwable exception) {
+            }
+            statement = null
+        }
+        if(connection) {
+            try {
+                connection.close()
+            } catch (Throwable exception) {
+            }
+            connection = null
+        }
+    }
+  }
+
   void loadUsersFromOldSystem() {
       String jdbcurl = grailsApplication.config.oldsuflex.jdbcurl
       String jdbcuser = grailsApplication.config.oldsuflex.jdbcuser
@@ -74,7 +160,7 @@ class SysAdminService {
       java.sql.ResultSet resultSet = null
       try {
           connection = java.sql.DriverManager.getConnection(jdbcurl, jdbcuser, jdbcpassword)
-          statement = connection.prepareStatement("select distinct(uid) from reportedtime time where datum>=curdate()-550 order by uid;")
+          statement = connection.prepareStatement("select distinct(uid) from reportedtime time where datum>=curdate()-731 order by uid;", ResultSet.FETCH_FORWARD, ResultSet.CONCUR_READ_ONLY)
           resultSet = statement.executeQuery()
           while(resultSet.next()) {
               String uid = resultSet.getString("uid")
@@ -123,7 +209,7 @@ class SysAdminService {
       try {
           connection = java.sql.DriverManager.getConnection(jdbcurl, jdbcuser, jdbcpassword)
           User.findAll([sort: 'eppn', order: 'asc']).each { User user ->
-            statement = connection.prepareStatement("select * from workrate where uid=?;")
+            statement = connection.prepareStatement("select * from workrate where uid=?;", ResultSet.FETCH_FORWARD, ResultSet.CONCUR_READ_ONLY)
             statement.setString(1, user.eppn.substring(0, user.eppn.indexOf("@")))
             resultSet = statement.executeQuery()
             while(resultSet.next()) {
@@ -186,5 +272,5 @@ class SysAdminService {
             connection = null
           }
       }
-    }
+  }
 }

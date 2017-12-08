@@ -11,6 +11,7 @@ class ReportedTime {
   Date lastUpdated
   int startTime = 0 // minutes since midnight
   User user
+  WorkRate workRate
 
   static constraints = {
     comment(nullable: true, blank: true)
@@ -18,5 +19,6 @@ class ReportedTime {
     flexDate(nullable: false)
     lastUpdated(nullable: true)
     user(nullable: false)
+    workRate(nullable: true)
   }
 }

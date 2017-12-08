@@ -8,4 +8,8 @@ class User {
     dateCreated(nullable: true)
     eppn(nullable: false, blank: false, unique: true)
   }
+
+  String getUid() { // eppn without domain
+    return eppn.substring(0, eppn.indexOf('@'))
+  }
 }
