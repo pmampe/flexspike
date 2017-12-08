@@ -7,6 +7,62 @@ import java.sql.ResultSet
 class SysAdminService {
   GrailsApplication grailsApplication
 
+  void loadAbsencesFromOldSystem() {
+      String jdbcurl = grailsApplication.config.oldsuflex.jdbcurl
+      String jdbcuser = grailsApplication.config.oldsuflex.jdbcuser
+      String jdbcpassword = grailsApplication.config.oldsuflex.jdbcpassword
+      java.sql.Connection connection = null
+      java.sql.PreparedStatement statement = null
+      java.sql.ResultSet resultSet = null
+      try {
+          connection = java.sql.DriverManager.getConnection(jdbcurl, jdbcuser, jdbcpassword)
+          User.findAllByEppnIsNotNull([sort: 'eppn', order: 'asc']).each { User user ->
+              statement = connection.prepareStatement("select datum, abslength, absstart, comment from absence where uid=? order by datum;", ResultSet.FETCH_FORWARD, ResultSet.CONCUR_READ_ONLY)
+              statement.setString(1, user.getUid())
+              resultSet = statement.executeQuery()
+              while(resultSet.next()) {
+                  Date date = resultSet.getDate("datum")
+                  int abslength = resultSet.getInt('abslength')
+                  int absstart = resultSet.getInt('absstart')
+                  String comment = resultSet.getString('comment')
+                  FlexDate flexDate = FlexDate.findByDate(date)
+                  Absence absence = Absence.findByUserAndFlexDate(user, flexDate)
+                  if(!absence) {
+                      absence = Absence.newInstance(user: user, flexDate: flexDate)
+                  }
+                  absence.comment = comment
+                  absence.startTime = absstart
+                  absence.length = abslength
+                  absence.save(flush: true, failOnError: true)
+              }
+          }
+      } catch (Throwable exception) {
+          log.info "Problem accessing old database: ${exception.getMessage()}"
+      } finally {
+          if(resultSet) {
+              try {
+                  resultSet.close()
+              } catch (Throwable exception) {
+              }
+              resultSet = null
+          }
+          if(statement) {
+              try {
+                  statement.close()
+              } catch (Throwable exception) {
+              }
+              statement = null
+          }
+          if(connection) {
+              try {
+                  connection.close()
+              } catch (Throwable exception) {
+              }
+              connection = null
+          }
+      }
+  }
+
   void loadDatesFromOldSystem() {
       String jdbcurl = grailsApplication.config.oldsuflex.jdbcurl
       String jdbcuser = grailsApplication.config.oldsuflex.jdbcuser

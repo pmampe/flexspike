@@ -6,6 +6,11 @@ class SysAdminDashboardController {
   def index() {
   }
 
+  def initAbsencesFromOldSystem()  {
+      sysAdminService.loadAbsencesFromOldSystem()
+      return redirect(action: 'index')
+  }
+
   def initDatesFromOldSystem() {
       sysAdminService.loadDatesFromOldSystem()
       return redirect(action: 'index')

@@ -130,7 +130,7 @@ databaseChangeLog = {
     addForeignKeyConstraint(baseColumnNames: "user_id", baseTableName: "work_rate", constraintName: "wr2uFK", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "user", referencesUniqueColumn: "true")
   }
 
-    changeSet(author: "mange", id: "1448278733528-5") {
+  changeSet(author: "mange", id: "1448278733528-5") {
     createTable(tableName: "reported_time") {
       column(autoIncrement: "true", name: "id", type: "bigint") {
         constraints(nullable: "false", primaryKey: "true", primaryKeyName: "reportedTimePK")
@@ -194,5 +194,50 @@ databaseChangeLog = {
     addForeignKeyConstraint(baseColumnNames: "flex_date_id", baseTableName: "reported_time", constraintName: "rt2fdFK", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "flex_date", referencesUniqueColumn: "true")
     addForeignKeyConstraint(baseColumnNames: "user_id", baseTableName: "reported_time", constraintName: "rt2uFK", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "user", referencesUniqueColumn: "true")
     addForeignKeyConstraint(baseColumnNames: "work_rate_id", baseTableName: "reported_time", constraintName: "rt2wrFK", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "user", referencesUniqueColumn: "true")
+  }
+
+  changeSet(author: "mange", id: "1448278733528-7") {
+    createTable(tableName: "absence") {
+      column(autoIncrement: "true", name: "id", type: "bigint") {
+        constraints(nullable: "false", primaryKey: "true", primaryKeyName: "absencePK")
+      }
+
+      column(name: "version", type: "bigint") {
+        constraints(nullable: "false")
+      }
+
+      column(name: "date_created", type: "datetime") {
+        constraints(nullable: "true")
+      }
+
+      column(name: "last_updated", type: "datetime") {
+        constraints(nullable: "true")
+      }
+
+      column(name: "comment", type: "varchar(96)") {
+        constraints(nullable: "true")
+      }
+
+      column(name: "flex_date_id", type: "bigint") {
+        constraints(nullable: "false")
+      }
+
+      column(name: "length", type: "integer") {
+        constraints(nullable: "true")
+      }
+
+      column(name: "start_time", type: "integer") {
+        constraints(nullable: "true")
+      }
+
+      column(name: "user_id", type: "bigint") {
+        constraints(nullable: "false")
+      }
+    }
+  }
+
+  changeSet(author: "mange", id: "1448278733528-8") {
+    addForeignKeyConstraint(baseColumnNames: "flex_date_id", baseTableName: "absence", constraintName: "a2fdFK", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "flex_date", referencesUniqueColumn: "true")
+    addForeignKeyConstraint(baseColumnNames: "user_id", baseTableName: "absence", constraintName: "a2uFK", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "user", referencesUniqueColumn: "true")
   }
 }
