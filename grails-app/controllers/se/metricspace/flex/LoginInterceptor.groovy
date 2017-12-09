@@ -12,7 +12,14 @@ class LoginInterceptor {
   }
 
   boolean before() {
-    String eppn = (request.getAttribute('eppn') as String) ?: ((Environment.current == Environment.DEVELOPMENT || Environment.current == Environment.TEST) ? 'flexuser@su.se' : null)
+    String eppn = (request.getAttribute('eppn') as String)
+    if(null==eppn && (Environment.current == Environment.DEVELOPMENT || Environment.current == Environment.TEST)) {
+      SessionUser sessionUser = new SessionUser('fakeuser@su.se', Role.SYSADMIN, ['employee'], "Donald Duck")  
+      session.setAttribute('sessionUser', sessionUser)
+      session.setAttribute('role', Role.SYSADMIN)
+      return true
+    }
+
     if (!eppn) {
       /** If no eppn available we set role to public and return */
       session.setAttribute('role', Role.PUBLIC)

@@ -1,5 +1,8 @@
 package se.metricspace.flex
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 enum Role {
   PUBLIC('public',100),
   STUDENT('student',200),
