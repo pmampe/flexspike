@@ -285,8 +285,18 @@ databaseChangeLog = {
   changeSet(author: "mano3567", id: "1448278733528-12") {
     sql("update reported_time r inner join user u on u.id=r.user_id inner join flex_date f on f.id=r.flex_date_id inner join work_rate w on w.user_id=u.id and w.start_date_id<=f.id and w.end_date_id>=f.id set r.work_rate_id=w.id where w.start_date_id is not null and w.end_date_id is not null;")
   }
-  
+
   changeSet(author: "mano3567", id: "1448278733528-13") {
     sql("update reported_time r inner join user u on u.id=r.user_id inner join flex_date f on f.id=r.flex_date_id inner join work_rate w on w.user_id=u.id and w.start_date_id<=f.id  set r.work_rate_id=w.id where w.start_date_id is not null and w.end_date_id is null;")
+  }
+
+  changeSet(author: "mano3567", id: "1448278733528-14") {
+    dropTable(tableName: "absence")
+    dropTable(tableName: "agregatedtime")
+    dropTable(tableName: "calendar")
+    dropTable(tableName: "employee")
+    dropTable(tableName: "reportedtime")
+    dropTable(tableName: "timeadjustments")
+    dropTable(tableName: "workrate")
   }
 }
