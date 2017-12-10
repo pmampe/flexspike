@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
     <head>
-        <title>SysAdmin</title>
+        <title>Admin</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="main"/>
     </head>
@@ -9,9 +9,17 @@
     <body>
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h2 class="panel-title">SysAdmin Dashboard</h2>
+                <h2 class="panel-title">Admin Grace in Moice</h2>
             </div>
             <div class="panel-body">
+                <g:form name="findForm" action="userOverview" method="GET">
+                    <div class="form-group">
+                        <label for="uid">Uid:</label>
+                        <g:textField name="uid" value="${uid}" class="form-control"/>
+                    </div>
+                    <g:submitButton name="find" value="Sök Användare"/>
+                </g:form>
+
                 <table class="table table-bordered table-hover table-responsive table-striped">
                     <thead><tr><th>Namn</th><th>Antal</th><th>LastUpdated</th></tr></thead>
                     <tbody>

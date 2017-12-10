@@ -4,6 +4,7 @@ import groovy.transform.CompileStatic
 
 @CompileStatic
 class DashboardInterceptor {
+    int order = 40
 
     boolean before() {
         SessionUser sessionUser = session.getAttribute('sessionUser') as SessionUser
