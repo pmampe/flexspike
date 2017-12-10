@@ -7,17 +7,17 @@ class SessionUser {
   private String itsDisplayName
   private String itsEppn
   private  Role itsRole
-  List<String> itsAffiliations
+  boolean itsEmployee
 
-  SessionUser(String theEppn, Role theRole, List<String> theAffiliations, String theDisplayName) {
+  SessionUser(String theEppn, Role theRole, boolean isEmployee, String theDisplayName) {
     itsDisplayName = theDisplayName?.trim()
     itsEppn = theEppn?.trim()
     itsRole = theRole
-    itsAffiliations = theAffiliations?.sort()
+    itsEmployee = isEmployee
   }
 
   String getDisplayName() {
-    return itsEppn
+    return itsDisplayName
   }
 
   String getEppn() {
@@ -33,6 +33,10 @@ class SessionUser {
   }
 
   boolean isEmployee() {
-    return itsAffiliations?.contains('employee')
+    return itsEmployee
+  }
+
+  boolean isSuPerson() {
+    return itsEppn?.endsWith("@su.se")
   }
 }

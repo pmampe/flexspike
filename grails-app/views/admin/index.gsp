@@ -24,6 +24,19 @@
                     </tbody>
                     <tfoot><tr><th>Namn</th><th>Antal</th><th>LastUpdated</th></tr></tfoot>
                 </table>
+                <hr/>
+                <strong>SessionUser:</strong>
+                <table class="table table-bordered table-hover table-responsive table-striped">
+                    <thead><tr><th>Key</th><th>Value</th></tr></thead>
+                    <tbody>
+                        <tr><td>Eppn</td><td>${session.sessionUser.eppn}</td></tr>
+                        <tr><td>Uid</td><td>${session.sessionUser.uid}</td></tr>
+                        <tr><td>Role</td><td>${session.sessionUser.role}</td></tr>
+                        <tr><td>IsEmployee</td><td>${session.sessionUser.isEmployee()}</td></tr>
+                        <tr><td>IsSuPerson</td><td>${session.sessionUser.isSuPerson()}</td></tr>
+                    </tbody>
+                    <tfoot><tr><th>Key</th><th>Value</th></tr></tfoot>
+                </table>
             </div>
         </div>
     </body>

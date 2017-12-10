@@ -1,6 +1,6 @@
 package se.metricspace.flex
 
-class SysAdminDashboardController {
+class AdminController {
   SysAdminService sysAdminService
 
   def index() {

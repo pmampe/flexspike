@@ -1,11 +1,12 @@
 package se.metricspace.flex
 
-import grails.testing.gorm.DomainUnitTest
+import grails.testing.web.controllers.ControllerUnitTest
 import spock.lang.Specification
 
-class AbsentSpec extends Specification implements DomainUnitTest<Absent> {
+class AdminControllerSpec extends Specification implements ControllerUnitTest<AdminController> {
 
     def setup() {
+        controller.sysAdminService = Mock(SysAdminService)
     }
 
     def cleanup() {

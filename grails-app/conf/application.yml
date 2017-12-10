@@ -114,8 +114,3 @@ environments:
     production:
         dataSource:
             jndiName: "java:comp/env/jdbc/flex"
-oldsuflex:
-    jdbcurl: "jdbc:mysql://somehostname:3306/dbname?autoReconnect=true"
-    jdbcuser: "username"
-    jdbcpassword: "password"
-

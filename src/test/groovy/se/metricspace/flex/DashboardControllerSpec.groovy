@@ -1,9 +1,9 @@
 package se.metricspace.flex
 
-import grails.testing.gorm.DomainUnitTest
+import grails.testing.web.controllers.ControllerUnitTest
 import spock.lang.Specification
 
-class AbsentSpec extends Specification implements DomainUnitTest<Absent> {
+class DashboardControllerSpec extends Specification implements ControllerUnitTest<DashboardController> {
 
     def setup() {
     }
