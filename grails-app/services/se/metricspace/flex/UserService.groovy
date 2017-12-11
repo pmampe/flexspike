@@ -22,7 +22,6 @@ class UserService {
         if(uid) {
             try {
                 List<se.metricspace.flex.LdapObject> ldapObjects = rawLdapSearch(javax.naming.directory.SearchControls.SUBTREE_SCOPE, "dc=su,dc=se", "(uid=${uid})", 1, 3000)
-                log.info "size: ${ldapObjects?.size()}"
                 if(ldapObjects?.size()>0) {
                     ldapObject = ldapObjects[0]
                 }
@@ -52,11 +51,13 @@ class UserService {
         Sql sql
         try {
             sql = Sql.newInstance(dataSource)
-            sql.rows("select sum(${columnName}) as sum from ${tableName} where user_id=?;", [userId]).each { row ->
-                sum = row.sum as int
+            sql.rows("select sum(${columnName}) as summa from ${tableName} where user_id=?;", [userId]).each { row ->
+                if(row.summa) {
+                    sum = row.summa as Integer
+                }
             }
         } catch(Throwable exception) {
-            
+            log.warn "Some problems getting sum for ${columnName} / ${tableName}:${exception.getMessage()} "
         } finally {
             if(sql) {
                 try {

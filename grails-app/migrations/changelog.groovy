@@ -259,7 +259,7 @@ databaseChangeLog = {
         constraints(nullable: "true")
       }
 
-      column(name: "delta", type: "integer") {
+      column(name: "adjustment", type: "integer") {
         constraints(nullable: "true")
       }
 
@@ -274,11 +274,11 @@ databaseChangeLog = {
   }
 
   changeSet(author: "mano3567", id: "1448278733528-11") {
-    sql("insert into user (eppn, version, date_created) select distinct(uid) as eppn, 0, now() from reportedtime where datum>(adddate(curdate(), -1400));")
+    sql("insert into user (eppn, version, date_created) select distinct(uid) as eppn, 0, now() from reportedtime where datum>(adddate(curdate(), -1830));")
     sql("insert into flex_date(version, date_created, last_updated, date, description, start_hour, end_hour, full_time, updated_by_eppn) select 0, now(), now(), datum as date, description, mandstart as start_hour, mandend as end_hour, fulltime as full_time, 'flexuser@su.se' from calendar;")
     sql("insert into absent(version, date_created, last_updated, user_id, flex_date_id, start_time, length, comment) select 0, now(), now(), u.id as user_id, f.id as flex_date_id, a.absstart as start_time, a.abslength as length, a.comment from user u inner join absence a on a.uid=u.eppn inner join flex_date f on f.date=a.datum;")
     sql("insert into work_rate(version, date_created, last_updated, user_id, start_date_id, end_date_id, rate, rate_monday, rate_tuesday, rate_wednesday, rate_thursday, rate_friday) select 0, now(), now(), u.id as user_id, f1.id as start_date_id, f2.id as end_date_id, w.rate, w.morate, w.turate, w.werate, w.thrate, w.frrate from workrate w inner join user u on u.eppn=w.uid left join flex_date f1 on f1.date=w.startdate left join flex_date f2 on f2.date=enddate;")
-    sql("insert into time_adjustment(version, date_created, comment, delta, user_id) select 0, now(), t.comment, t.delta, u.id as user_id from timeadjustments t inner join user u on u.eppn=t.uid;")
+    sql("insert into time_adjustment(version, date_created, comment, adjustment, user_id) select 0, now(), t.comment, t.delta, u.id as user_id from timeadjustments t inner join user u on u.eppn=t.uid;")
     sql("insert into reported_time(version, date_created, last_updated, absent_all_day, comment, daily_delta, daily_total, end_time, flex_date_id, lunch_length, start_time, user_id) select 0, now(), now(), absentallday as absent_all_day, comment, dailydelta as daily_delta, dailytotal as daily_total, (endhour*60+endminute) as end_time, f.id as flex_date_id, lunchlength as lunch_length, (starthour*60+startminute) as start_time, u.id as user_id from reportedtime r inner join user u on u.eppn=r.uid inner join flex_date f on f.date=r.datum;")
   }
 

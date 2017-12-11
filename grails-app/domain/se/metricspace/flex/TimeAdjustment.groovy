@@ -1,9 +1,9 @@
 package se.metricspace.flex
 
 class TimeAdjustment {
+    int adjustment = 0
     String comment
     Date dateCreated
-    int delta = 0
     User user
 
     static constraints = {

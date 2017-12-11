@@ -6,6 +6,7 @@ import spock.lang.Specification
 class CalenderControllerSpec extends Specification implements ControllerUnitTest<CalenderController> {
 
     def setup() {
+        controller.dateService = Mock(DateService)
     }
 
     def cleanup() {
