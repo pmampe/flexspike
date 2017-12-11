@@ -9,9 +9,13 @@ import javax.naming.directory.DirContext
 import javax.naming.directory.InitialDirContext
 import javax.naming.directory.SearchControls
 import javax.naming.directory.SearchResult
+import javax.sql.DataSource
+import groovy.sql.Sql
 
 @Transactional
 class UserService {
+    DataSource dataSource
+
     @NotTransactional
     LdapObject findUserInLdapByUid(String uid) {
         LdapObject ldapObject = null
@@ -42,6 +46,29 @@ class UserService {
         return isCalAdm
     }
 
+    @NotTransactional
+    int sumColFromTable(Long userId, String columnName, String tableName) {
+        int sum = 0
+        Sql sql
+        try {
+            sql = Sql.newInstance(dataSource)
+            sql.rows("select sum(${columnName}) as sum from ${tableName} where user_id=?;", [userId]).each { row ->
+                sum = row.sum as int
+            }
+        } catch(Throwable exception) {
+            
+        } finally {
+            if(sql) {
+                try {
+                    sql.close()
+                } catch(Throwable exception) {
+                }
+                sql = null
+            }
+        }
+        return sum
+    }
+
     private DirContext getContext(int timeout=500) {
         Hashtable env = new Hashtable()
         env.put(Context.INITIAL_CONTEXT_FACTORY,"com.sun.jndi.ldap.LdapCtxFactory")
@@ -53,7 +80,6 @@ class UserService {
     }
 
     private List<se.metricspace.flex.LdapObject> rawLdapSearch(int scope, String base, String condition, int maxSize = 100, int timeOut = 500) {
-        log.info "rawLdapSearch(${scope}, ${base}, ${condition}, ${maxSize}, ${timeOut})"
         List<se.metricspace.flex.LdapObject> resultSet = []
         DirContext ctx = null
         NamingEnumeration answer = null

@@ -12,7 +12,7 @@
                 <h2 class="panel-title">Overview for ${ldapUser?.getFirstAttributeValue('displayName')}</h2>
             </div>
             <div class="panel-body">
-                xxx
+                Abs: ${absSum}
             </div>
         </div>
     </body>
