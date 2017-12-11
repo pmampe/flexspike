@@ -33,6 +33,34 @@ class UserService {
     }
 
     @NotTransactional
+    SessionUser getSessionUserForUid(String uid) {
+        SessionUser sessionUser
+        if(uid?.trim()) {
+            LdapObject ldapUser = findUserInLdapByUid((uid.indexOf("@")>0) ? uid.substring(0, uid.indexOf("@")) : uid)
+            if(ldapUser) {
+                String displayName = ldapUser.getFirstAttributeValue('displayName')
+                List<String> affiliations = ldapUser.getAttributeValues('eduPersonAffiliation')
+                if(affiliations?.contains('employee')) {
+                    if(isCalenderAdmin(ldapUser.getFirstAttributeValue('uid'))) {
+                        sessionUser = new SessionUser(uid, Role.CALADMIN, true, displayName)
+                    } else {
+                        sessionUser = new SessionUser(uid, Role.EMPLOYEE, true, displayName)
+                    }
+                } else if (affiliations?.contains('student')) {
+                    sessionUser = new SessionUser(uid, Role.STUDENT, false, displayName)
+                } else {
+                    sessionUser = new SessionUser(uid, Role.PUBLIC, false, displayName)
+                }
+            } else {
+                sessionUser = new SessionUser(uid, Role.PUBLIC, false, "")
+            }
+        } else {
+            sessionUser = new SessionUser("", Role.PUBLIC, false, "")
+        }
+        return sessionUser
+    }
+
+    @NotTransactional
     boolean isCalenderAdmin(String uid) {
         boolean isCalAdm = false
         if(uid) {

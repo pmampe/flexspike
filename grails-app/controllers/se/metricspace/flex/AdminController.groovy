@@ -22,4 +22,20 @@ class AdminController {
       List<WorkRate> workRates = WorkRate.findAllByUser(user, [sort: 'startDate', order: 'desc'])
       [absentList: absentList, absSum: absSum, latestReportedTimes: latestReportedTimes, ldapUser: ldapUser, reportedTimeDelta: reportedTimeDelta, timeAdjustments: timeAdjustments, timeAdjustmentSum: timeAdjustmentSum, uid: uid, user: user, workRates: workRates]
   }
+
+  def sudo() {
+      String uid = params.uid?.trim()
+      if(!uid) {
+          return redirect(action: 'index')
+      }
+      SessionUser sessionUser = userService.getSessionUserForUid(uid)
+      if(sessionUser) {
+          log.info "Hoho"
+          SessionUser realUser = session.getAttribute('sessionUser') as SessionUser
+          session.setAttribute('sessionUser', sessionUser)
+          session.setAttribute('realUser', realUser)
+          return redirect(controller: 'dashboard', action: 'index')
+      }
+      return redirect(action: 'index')
+  }
 }

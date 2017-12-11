@@ -27,7 +27,7 @@ class LoginInterceptor {
           if(hacksySysAdminsUntilHandledBySukatOrIdp.contains(eppn)) {
             SessionUser sessionUser = new SessionUser(eppn, Role.SYSADMIN, true, displayName)
             session.setAttribute('sessionUser', sessionUser)
-          } else  if(userService.isCalenderAdmin(eppn.substring(0, eppn.indexOf('@')))) {
+          } else if(userService.isCalenderAdmin(eppn.substring(0, eppn.indexOf('@')))) {
             SessionUser sessionUser = new SessionUser(eppn, Role.CALADMIN, true, displayName)
             session.setAttribute('sessionUser', sessionUser)
           } else {
@@ -47,8 +47,10 @@ class LoginInterceptor {
       }
     }
     if(null==eppn && (Environment.current == Environment.DEVELOPMENT || Environment.current == Environment.TEST)) {
-      SessionUser sessionUser = new SessionUser('fakeuser@su.se', Role.SYSADMIN, true, "Donald Duck")
-      session.setAttribute('sessionUser', sessionUser)
+      if(!session.getAttribute('realUser')) {
+        SessionUser sessionUser = new SessionUser('fakeuser@su.se', Role.SYSADMIN, true, "Donald Duck")
+        session.setAttribute('sessionUser', sessionUser)
+      }
       return true
     }
 
