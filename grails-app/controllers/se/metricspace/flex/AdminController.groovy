@@ -30,7 +30,6 @@ class AdminController {
       }
       SessionUser sessionUser = userService.getSessionUserForUid(uid)
       if(sessionUser) {
-          log.info "Hoho"
           SessionUser realUser = session.getAttribute('sessionUser') as SessionUser
           session.setAttribute('sessionUser', sessionUser)
           session.setAttribute('realUser', realUser)
