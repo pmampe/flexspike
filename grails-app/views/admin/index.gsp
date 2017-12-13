@@ -28,6 +28,17 @@
                     <g:submitButton name="sudo" value="SUDO"/>
                 </g:form>
 
+                <table class="table table-bordered table-hover table-responsive table-striped">
+                    <thead><tr><th>Tid</th><th>Antal</th></tr></thead>
+                    <tbody>
+                        <tr><td>Week</td><td>${usersLastWeek}</td></tr>
+                        <tr><td>Month</td><td>${usersLastMonth}</td></tr>
+                        <tr><td>Quarter</td><td>${usersLastQuarter}</td></tr>
+                        <tr><td>Year</td><td>${usersLastYear}</td></tr>
+                    </tbody>
+                    <tfoot><tr><th>Tid</th><th>Antal</th></tr></tfoot>
+                </table>
+                <hr/>
 
                 <table class="table table-bordered table-hover table-responsive table-striped">
                     <thead><tr><th>Namn</th><th>Antal</th><th>LastUpdated</th></tr></thead>
@@ -42,6 +53,7 @@
                     <tfoot><tr><th>Namn</th><th>Antal</th><th>LastUpdated</th></tr></tfoot>
                 </table>
                 <hr/>
+
                 <strong>SessionUser:</strong>
                 <table class="table table-bordered table-hover table-responsive table-striped">
                     <thead><tr><th>Key</th><th>Value</th></tr></thead>

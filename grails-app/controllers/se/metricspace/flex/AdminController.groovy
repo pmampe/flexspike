@@ -6,13 +6,17 @@ class AdminController {
 
   def index() {
       String uid = params.uid?.trim()
-      [uid: uid]
+      int usersLastMonth = userService.uniqueUsersSince(-31)
+      int usersLastQuarter = userService.uniqueUsersSince(-91)
+      int usersLastWeek = userService.uniqueUsersSince(-7)
+      int usersLastYear = userService.uniqueUsersSince(-366)
+      [uid: uid, usersLastMonth: usersLastMonth, usersLastQuarter: usersLastQuarter, usersLastWeek: usersLastWeek, usersLastYear: usersLastYear]
   }
 
   def userOverview() {
       String uid = params.uid?.trim()
       LdapObject ldapUser = (uid) ? userService.findUserInLdapByUid(uid) : null
-      User user = User.findByEppn(uid)
+      User user = User.findByUid(uid)
       List<Absent> absentList = Absent.findAllByUser(user, [sort: 'flexDate', order: 'desc'])
       int absSum = userService.sumColFromTable(user.id, 'length', 'absent')
       List<TimeAdjustment> timeAdjustments = TimeAdjustment.findAllByUser(user, [sort: 'dateCreated', order: 'desc'])

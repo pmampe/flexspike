@@ -7,6 +7,7 @@ class AdminControllerSpec extends Specification implements ControllerUnitTest<Ad
 
     def setup() {
         controller.sysAdminService = Mock(SysAdminService)
+        controller.userService = Mock(UserService)
     }
 
     def cleanup() {

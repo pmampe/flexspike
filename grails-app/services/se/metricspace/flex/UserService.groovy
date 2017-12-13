@@ -85,7 +85,7 @@ class UserService {
                 }
             }
         } catch(Throwable exception) {
-            log.warn "Some problems getting sum for ${columnName} / ${tableName}:${exception.getMessage()} "
+            log.warn "Some problems getting sum for ${columnName} / ${tableName}: ${exception.getMessage()} "
         } finally {
             if(sql) {
                 try {
@@ -98,6 +98,34 @@ class UserService {
         return sum
     }
 
+    @NotTransactional
+    int uniqueUsersSince(int numberOfDays) {
+        int count = 0
+
+        Sql sql
+        try {
+            sql = Sql.newInstance(dataSource)
+            sql.rows("select count(distinct(rt.user_id)) as count from reported_time rt inner join flex_date fd on fd.id=rt.flex_date_id where fd.date>(adddate(curdate(), ${numberOfDays}));;").each { row ->
+                if(row.count) {
+                    count = row.count as Integer
+                }
+            }
+        } catch(Throwable exception) {
+            log.warn "Some problems getting number of users: ${exception.getMessage()} "
+        } finally {
+            if(sql) {
+                try {
+                    sql.close()
+                } catch(Throwable exception) {
+                }
+                sql = null
+            }
+        }
+
+        return count
+    }
+
+    @NotTransactional
     private DirContext getContext(int timeout=500) {
         Hashtable env = new Hashtable()
         env.put(Context.INITIAL_CONTEXT_FACTORY,"com.sun.jndi.ldap.LdapCtxFactory")
@@ -108,6 +136,7 @@ class UserService {
         return ctx
     }
 
+    @NotTransactional
     private List<se.metricspace.flex.LdapObject> rawLdapSearch(int scope, String base, String condition, int maxSize = 100, int timeOut = 500) {
         List<se.metricspace.flex.LdapObject> resultSet = []
         DirContext ctx = null

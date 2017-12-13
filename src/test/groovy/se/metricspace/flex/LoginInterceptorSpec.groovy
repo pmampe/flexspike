@@ -6,6 +6,7 @@ import spock.lang.Specification
 class LoginInterceptorSpec extends Specification implements InterceptorUnitTest<LoginInterceptor> {
 
     def setup() {
+        interceptor.userService = Mock(UserService)
     }
 
     def cleanup() {

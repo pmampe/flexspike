@@ -6,6 +6,7 @@ import spock.lang.Specification
 class DashboardControllerSpec extends Specification implements ControllerUnitTest<DashboardController> {
 
     def setup() {
+        controller.userService = Mock(UserService)
     }
 
     def cleanup() {
