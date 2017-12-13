@@ -33,26 +33,30 @@ class UserService {
     }
 
     @NotTransactional
-    SessionUser getSessionUserForUid(String uid) {
+    SessionUser getSessionUserForUid(String eppn) {
         SessionUser sessionUser
-        if(uid?.trim()) {
-            LdapObject ldapUser = findUserInLdapByUid((uid.indexOf("@")>0) ? uid.substring(0, uid.indexOf("@")) : uid)
+        if(eppn?.trim()) {
+            if(eppn.indexOf("@")<1) {
+                eppn += "@su.se"
+            }
+            String uid = eppn.substring(0, eppn.indexOf("@"))
+            LdapObject ldapUser = findUserInLdapByUid(uid)
             if(ldapUser) {
                 String displayName = ldapUser.getFirstAttributeValue('displayName')
                 List<String> affiliations = ldapUser.getAttributeValues('eduPersonAffiliation')
                 if(affiliations?.contains('employee')) {
                     if(isCalenderAdmin(ldapUser.getFirstAttributeValue('uid'))) {
-                        sessionUser = new SessionUser(uid, Role.CALADMIN, true, displayName)
+                        sessionUser = new SessionUser(eppn, Role.CALADMIN, true, displayName)
                     } else {
-                        sessionUser = new SessionUser(uid, Role.EMPLOYEE, true, displayName)
+                        sessionUser = new SessionUser(eppn, Role.EMPLOYEE, true, displayName)
                     }
                 } else if (affiliations?.contains('student')) {
-                    sessionUser = new SessionUser(uid, Role.STUDENT, false, displayName)
+                    sessionUser = new SessionUser(eppn, Role.STUDENT, false, displayName)
                 } else {
-                    sessionUser = new SessionUser(uid, Role.PUBLIC, false, displayName)
+                    sessionUser = new SessionUser(eppn, Role.PUBLIC, false, displayName)
                 }
             } else {
-                sessionUser = new SessionUser(uid, Role.PUBLIC, false, "")
+                sessionUser = new SessionUser(eppn, Role.PUBLIC, false, "")
             }
         } else {
             sessionUser = new SessionUser("", Role.PUBLIC, false, "")

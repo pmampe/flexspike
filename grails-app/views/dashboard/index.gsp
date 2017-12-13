@@ -13,6 +13,11 @@
       </div>
       <div class="panel-body">
         <strong>Summa: ${reportedTimeDelta+timeAdjustmentSum} (${reportedTimeDelta}, ${timeAdjustmentSum})</strong>
+        <div class="row">
+            <div class="col-sm-4">Datum</div>
+            <div class="col-sm-8"><g:select name="date" from="${dates}" optionKey="id" optionValue="dateAsString"/></div>
+        </div>
+        
         <g:if test="${reportedTimes}">
             <strong>Reported Time</strong>
             <table class="table table-bordered table-hover table-striped table-responsive">

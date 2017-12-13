@@ -21,6 +21,10 @@ class FlexDate {
     updatedByEppn(nullable: true, blank: true)
   }
 
+  String getDateAsString() {
+    date.format('yyyy-MM-dd')    
+  }
+
   boolean after(FlexDate flexDate) {
     return (date == flexDate.date || date.after(flexDate.date))
   }

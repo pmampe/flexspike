@@ -12,18 +12,10 @@
                 <h2 class="panel-title">Admin Grace in Moice</h2>
             </div>
             <div class="panel-body">
-                <g:form name="findForm" action="userOverview" method="GET">
-                    <div class="form-group">
-                        <label for="uid">Uid:</label>
-                        <g:textField name="uid" value="${uid}" class="form-control"/>
-                    </div>
-                    <g:submitButton name="find" value="Sök Användare"/>
-                </g:form>
-
                 <g:form name="findForm" action="sudo" method="GET">
                     <div class="form-group">
-                        <label for="uid">Uid:</label>
-                        <g:textField name="uid" value="${uid}" class="form-control"/>
+                        <label for="eppn">Eppn:</label>
+                        <g:textField name="eppn" value="${eppn}" class="form-control"/>
                     </div>
                     <g:submitButton name="sudo" value="SUDO"/>
                 </g:form>
