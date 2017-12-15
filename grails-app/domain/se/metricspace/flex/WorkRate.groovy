@@ -47,4 +47,10 @@ class WorkRate {
     }
     return workRate
   }
+
+  int getAverageRate() {
+      int workRate = rate/100
+      int avgRate = (rateMonday+rateTuesday+rateWednesday+rateThursday+rateFriday+499)/500
+      return (avgRate>0) ? avgRate : workRate
+  }
 }

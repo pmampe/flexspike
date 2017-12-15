@@ -1,6 +1,7 @@
 package se.metricspace.flex
 
 class DashboardController {
+    DateService dateService
     UserService userService
 
     def index() {
@@ -30,7 +31,10 @@ class DashboardController {
 
     def showAbsence() {
         log.info "showAbsence: ${params}"
-        return render(template: "showAbsence", model: [])
+        SessionUser sessionUser = session.sessionUser
+        User user = User.findByUid(sessionUser.getUid())
+        List<Absent> absences = Absent.findAllByUser(user, [sort: 'flexDate', order: 'desc'])
+        return render(template: "showAbsence", model: [absences: absences])
     }
     def show12Weeks() {
         log.info "show12Weeks: ${params}"
@@ -44,16 +48,25 @@ class DashboardController {
 
     def showMonthly() {
         log.info "showMonthly: ${params}"
-        return render(template: "showMonthly", model: [])
+        SessionUser sessionUser = session.sessionUser
+        User user = User.findByUid(sessionUser.getUid())
+        List<Expando> timeByMonth = dateService.getUserReportedTimeByMonth(user.id)
+        return render(template: "showMonthly", model: [timeByMonth: timeByMonth])
     }
 
     def showTimeAdjustments() {
         log.info "showTimeAdjustments: ${params}"
-        return render(template: "showTimeAdjustments", model: [])
+        SessionUser sessionUser = session.sessionUser
+        User user = User.findByUid(sessionUser.getUid())
+        List<TimeAdjustment> adjustments = TimeAdjustment.findAllByUser(user, [sort: 'dateCreated', order: 'desc'])
+        return render(template: "showTimeAdjustments", model: [adjustments: adjustments])
     }
 
     def showWorkRates() {
         log.info "showWorkRates: ${params}"
-        return render(template: "showWorkRates", model: [])
+        SessionUser sessionUser = session.sessionUser
+        User user = User.findByUid(sessionUser.getUid())
+        List<WorkRate> workrates = WorkRate.findAllByUser(user, [sort: 'startDate', order: 'desc'])
+        return render(template: "showWorkRates", model: [workrates: workrates])
     }
 }
