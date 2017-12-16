@@ -27,11 +27,13 @@
                 <g:if test="${session.sessionUser.getRole()==se.metricspace.flex.Role.SYSADMIN}">
                   <li><g:link controller="admin" action="index">Admin</g:link></li>
                 </g:if>
-                <g:if test="${session.realUser}">
-                  <li><g:link controller="public" action="unsudo">Un-Sudo</g:link></li>
-                </g:if>
               </ul>
             </li>
+          </ul>
+        </g:if>
+        <g:if test="${session.realUser}">
+          <ul class="nav navbar-nav">
+              <li><g:link controller="public" action="unsudo">Un-Sudo</g:link></li>
           </ul>
         </g:if>
       </div>

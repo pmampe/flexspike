@@ -17,7 +17,6 @@ class DashboardController {
     }
 
     def selectOtherDate() {
-        log.info "selectOtherDate: ${params}"
         FlexDate flexDate = (params.long('id')) ? FlexDate.get(params.long('id')) : null
         SessionUser sessionUser = session.sessionUser
         User user = User.findByUid(sessionUser.getUid())
@@ -29,33 +28,43 @@ class DashboardController {
          
     }
 
+    def show12Weeks() {
+        SessionUser sessionUser = session.sessionUser
+        User user = User.findByUid(sessionUser.getUid())
+        Map<String, Map<String, Integer>> timeByWeek = dateService.getUserReportedTimeByWeek(user.id, 12)
+        return render(template: "show12Weeks", model: [timeByWeek: timeByWeek])
+    }
+
     def showAbsence() {
-        log.info "showAbsence: ${params}"
         SessionUser sessionUser = session.sessionUser
         User user = User.findByUid(sessionUser.getUid())
         List<Absent> absences = Absent.findAllByUser(user, [sort: 'flexDate', order: 'desc'])
         return render(template: "showAbsence", model: [absences: absences])
     }
-    def show12Weeks() {
-        log.info "show12Weeks: ${params}"
-        return render(template: "show12Weeks", model: [])
-    }
 
     def showLastMonth() {
-        log.info "showLastMonth: ${params}"
-        return render(template: "showLastMonth", model: [])
+        SessionUser sessionUser = session.sessionUser
+        User user = User.findByUid(sessionUser.getUid())
+        Date today = Date.newInstance()
+        List<ReportedTime> lastMonth = ReportedTime.createCriteria().list {
+            eq('user', user) 
+            flexDate {
+                gte('date', today.minus(31))
+                lte('date', today)
+            }
+            order("flexDate","desc")
+        }
+        return render(template: "showLastMonth", model: [lastMonth: lastMonth])
     }
 
     def showMonthly() {
-        log.info "showMonthly: ${params}"
         SessionUser sessionUser = session.sessionUser
         User user = User.findByUid(sessionUser.getUid())
-        List<Expando> timeByMonth = dateService.getUserReportedTimeByMonth(user.id)
+        Map<String, Map<String, Integer>> timeByMonth = dateService.getUserReportedTimeByMonth(user.id)
         return render(template: "showMonthly", model: [timeByMonth: timeByMonth])
     }
 
     def showTimeAdjustments() {
-        log.info "showTimeAdjustments: ${params}"
         SessionUser sessionUser = session.sessionUser
         User user = User.findByUid(sessionUser.getUid())
         List<TimeAdjustment> adjustments = TimeAdjustment.findAllByUser(user, [sort: 'dateCreated', order: 'desc'])
@@ -63,7 +72,6 @@ class DashboardController {
     }
 
     def showWorkRates() {
-        log.info "showWorkRates: ${params}"
         SessionUser sessionUser = session.sessionUser
         User user = User.findByUid(sessionUser.getUid())
         List<WorkRate> workrates = WorkRate.findAllByUser(user, [sort: 'startDate', order: 'desc'])
