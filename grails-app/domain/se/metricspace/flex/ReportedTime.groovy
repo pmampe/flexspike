@@ -22,4 +22,9 @@ class ReportedTime {
     user(nullable: false)
     workRate(nullable: true)
   }
+
+  List<TimeAdjustment> getAdjustments() {
+      Date endOfDay = Date.parse("yyyy-MM-dd HH:mm:ss", flexDate.date.format(yyyy-HH-dd)+" 23:59:59")
+      return TimeAdjustment.findAllByUserAndCreatedDateGreaterThanEqualsAndCreatedDateLessThanEquals(user, flexDate.date, endOfDate)
+  }
 }

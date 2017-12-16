@@ -12,8 +12,9 @@ class DashboardController {
         ReportedTime reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)
         int timeAdjustmentSum = (user) ? userService.sumColFromTable(user.id, 'adjustment', 'time_adjustment') : 0
         int reportedTimeDelta = (user) ? userService.sumColFromTable(user.id, 'daily_delta', 'reported_time') : 0
+        List<TimeAdjustment> adjustments = reportedTime?.getAdjustments()
 
-        [dates: dates, flexDate: flexDate, reportedTime: reportedTime, reportedTimeDelta: reportedTimeDelta, timeAdjustmentSum: timeAdjustmentSum, user: user]
+        [adjustments: adjustments, dates: dates, flexDate: flexDate, reportedTime: reportedTime, reportedTimeDelta: reportedTimeDelta, timeAdjustmentSum: timeAdjustmentSum, user: user]
     }
 
     def selectOtherDate() {
@@ -23,8 +24,9 @@ class DashboardController {
         int timeAdjustmentSum = (user) ? userService.sumColFromTable(user.id, 'adjustment', 'time_adjustment') : 0
         int reportedTimeDelta = (user) ? userService.sumColFromTable(user.id, 'daily_delta', 'reported_time') : 0
         ReportedTime reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)
+        List<TimeAdjustment> adjustments = reportedTime?.getAdjustments()
 
-        return render(template: 'reportTime', model: [flexDate: flexDate, reportedTime: reportedTime, reportedTimeDelta: reportedTimeDelta, timeAdjustmentSum: timeAdjustmentSum])
+        return render(template: 'reportTime', model: [adjustments: adjustments, flexDate: flexDate, reportedTime: reportedTime, reportedTimeDelta: reportedTimeDelta, timeAdjustmentSum: timeAdjustmentSum])
          
     }
 
