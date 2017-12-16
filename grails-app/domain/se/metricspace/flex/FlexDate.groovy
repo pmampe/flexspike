@@ -32,4 +32,8 @@ class FlexDate {
   boolean before(FlexDate flexDate) {
     return (date == flexDate.date || date.before(flexDate.date))
   }
+
+  static FlexDate getCurrentDay() {
+    return FlexDate.findByDate(Date.parse('yyyy-MM-dd', Date.newInstance().format('yyyy-MM-dd')), [max: 1])
+  }
 }

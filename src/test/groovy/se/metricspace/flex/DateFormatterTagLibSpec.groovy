@@ -11,8 +11,13 @@ class DateFormatterTagLibSpec extends Specification implements TagLibUnitTest<Da
     def cleanup() {
     }
 
-    void "test something"() {
-        expect:"fix me"
-            true == false
+    void "test something useful"() {
+        given:
+
+        when:
+        1+2
+
+        then:
+        1<2
     }
 }

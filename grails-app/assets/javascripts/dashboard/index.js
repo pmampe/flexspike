@@ -133,6 +133,60 @@ var dashboardIndexModule = (function ( $ ) {
     });
   };
 
+  var initInputComment = function() {
+    $("input#comment").unbind("blur");
+    $("input#comment").on("blur", function (event) {
+        var newValue = $(this).val();
+        var flexDateid = $(this).data('flexdateid');
+        console.log("Comment: "+newValue+" / "+flexDateid);
+    });
+  };
+
+  var initInputEndTime = function() {
+    $("input#end").unbind("blur");
+    $("input#end").on("blur", function (event) {
+        var newValue = $(this).val();
+        var flexDateid = $(this).data('flexdateid');
+        var reg = new RegExp('^[0-2][0-9]:[0-5][0-9]$');
+        console.log("EndTime: "+newValue+" / "+flexDateid+" / "+reg.test(newValue));
+        if(reg.test(newValue)) {
+            $("strong#message").text("");
+        } else {
+            $("strong#message").text("EndTime has bad format ...");
+        }
+    });
+  };
+
+  var initInputLunchLength = function() {
+    $("input#lunch").unbind("blur");
+    $("input#lunch").on("blur", function (event) {
+        var newValue = $(this).val();
+        var flexDateid = $(this).data('flexdateid');
+        var reg = new RegExp('^[0-0][0-5]:[0-5][0-9]$');
+        console.log("Lunch: "+newValue+" / "+flexDateid+" / "+reg.test(newValue));
+        if(reg.test(newValue)) {
+            $("strong#message").text("");
+        } else {
+            $("strong#message").text("LunchLength has bad format ...");
+        }
+    });
+  };
+
+  var initInputStartTime = function() {
+      $("input#start").unbind("blur");
+      $("input#start").on("blur", function (event) {
+          var newValue = $(this).val();
+          var flexDateid = $(this).data('flexdateid');
+          var reg = new RegExp('^[0-2][0-9]:[0-5][0-9]$');
+          console.log("StartTime: "+newValue+" / "+flexDateid+" / "+reg.test(newValue));
+          if(reg.test(newValue)) {
+              $("strong#message").text("");
+          } else {
+              $("strong#message").text("StartTime has bad format ...");
+          }
+      });
+  };
+
   var initSelectDate = function() {
     $("select#date").unbind("change");
     $("select#date").on("change", function(event) {
@@ -151,6 +205,10 @@ var dashboardIndexModule = (function ( $ ) {
             },
             complete: function() {
                 console.log("complete");
+                initInputComment();
+                initInputEndTime();
+                initInputLunchLength();
+                initInputStartTime();
             }
         });
     });

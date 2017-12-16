@@ -6,7 +6,8 @@ class DashboardController {
 
     def index() {
         SessionUser sessionUser = session.sessionUser
-        FlexDate flexDate = FlexDate.findByDate(Date.newInstance())
+
+        FlexDate flexDate = FlexDate.getCurrentDay()
         List<FlexDate> dates = FlexDate.findAllByDateLessThanEqualsAndDateGreaterThanEquals(Date.newInstance(), Date.newInstance().minus(31),[sort: 'date', order: 'desc', max: 31])
         User user = User.findByUid(sessionUser.getUid())
         ReportedTime reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)

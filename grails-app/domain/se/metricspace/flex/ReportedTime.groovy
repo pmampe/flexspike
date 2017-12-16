@@ -23,8 +23,20 @@ class ReportedTime {
     workRate(nullable: true)
   }
 
+  String formatEndTime() {
+    return se.metricspace.flex.TimeFormatHelper.toHHMMString(endTime)
+  }
+
+  String formatLunchLength() {
+    return se.metricspace.flex.TimeFormatHelper.toHHMMString(lunchLength)
+  }
+
+  String formatStartTime() {
+    return se.metricspace.flex.TimeFormatHelper.toHHMMString(startTime)
+  }
+
   List<TimeAdjustment> getAdjustments() {
-      Date endOfDay = Date.parse("yyyy-MM-dd HH:mm:ss", flexDate.date.format(yyyy-HH-dd)+" 23:59:59")
-      return TimeAdjustment.findAllByUserAndCreatedDateGreaterThanEqualsAndCreatedDateLessThanEquals(user, flexDate.date, endOfDate)
+      Date endOfDay = Date.parse("yyyy-MM-dd HH:mm:ss", flexDate.date.format("yyyy-HH-dd")+" 23:59:59")
+      return TimeAdjustment.findAllByUserAndDateCreatedGreaterThanEqualsAndDateCreatedLessThanEquals(user, flexDate.date, endOfDay)
   }
 }

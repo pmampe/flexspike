@@ -58,6 +58,37 @@
                     </tbody>
                     <tfoot><tr><th>Key</th><th>Value</th></tr></tfoot>
                 </table>
+                <hr/>
+
+                <strong>Host Information:</strong>
+                <table class="table table-bordered table-hover table-responsive table-striped">
+                    <thead><tr><th>Key</th><th>Value</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Version:</strong></td><td>${grailsApplication.metadata.getApplicationVersion()}</td></tr>
+                        <tr><td><strong>Grails:</strong></td><td>v${grailsApplication.metadata.getGrailsVersion()}</td></tr>
+                        <tr><td><strong>Groovy:</strong></td><td>v${groovy.lang.GroovySystem.getVersion()}</td></tr>
+                        <tr><td><strong>Java-Name:</strong></td><td>${java.lang.System.getProperty("java.runtime.name")}</td></tr>
+                        <tr><td><strong>Java-Version:</strong></td><td>${java.lang.System.getProperty("java.runtime.version")}</td></tr>
+                        <tr><td><strong>Host:</strong></td><td>${InetAddress?.getLocalHost()?.getHostName()}</td></tr>
+                        <tr><td><strong>Environment:</strong></td><td>${grailsApplication.metadata.getEnvironment()}</td></tr>
+                    </tbody>
+                    <tfoot><tr><th>Key</th><th>Value</th></tr></tfoot>
+                </table>
+
+                <strong>Shibboleth Attributes:</strong>
+                <table class="table table-bordered table-hover table-responsive table-striped">
+                    <thead><tr><th>Key</th><th>Value</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>eppn:</strong></td><td>${request.eppn}</td></tr>
+                        <tr><td><strong>socialSecurityNumber:</strong></td><td>${request.socialSecurityNumber}</td></tr>
+                        <tr><td><strong>mail:</strong></td><td>${request.mail}</td></tr>
+                        <tr><td><strong>givenName:</strong></td><td>${request['givenName']}</td></tr>
+                        <tr><td><strong>sn:</strong></td><td>${request['sn']}</td></tr>
+                        <tr><td><strong>affiliation:</strong></td><td><g:each in="${request['affiliation']?.split(';')}" var="aff">${aff}<br/></g:each></td></tr>
+                        <tr><td><strong>entitlement:</strong></td><td><g:each in="${request['entitlement']?.split(';')}" var="enti"><g:if test="${enti.startsWith('urn:mace:swami.se:gmai:')}">${enti.substring(23)}</g:if><g:else>${enti}</g:else><br/></g:each></td></tr>
+                    </tbody>
+                    <tfoot><tr><th>Key</th><th>Value</th></tr></tfoot>
+                </table>
             </div>
         </div>
     </body>
