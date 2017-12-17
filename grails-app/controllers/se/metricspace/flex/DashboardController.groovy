@@ -80,4 +80,11 @@ class DashboardController {
         List<WorkRate> workrates = WorkRate.findAllByUser(user, [sort: 'startDate', order: 'desc'])
         return render(template: "showWorkRates", model: [workrates: workrates])
     }
+
+    def workRate() {
+        SessionUser sessionUser = session.sessionUser
+        User user = User.findByUid(sessionUser.getUid())
+        List<WorkRate> workRates = WorkRate.findAllByUser(user, [sort: 'startDate', order: 'desc'])
+        [workRates: workRates]
+    }
 }

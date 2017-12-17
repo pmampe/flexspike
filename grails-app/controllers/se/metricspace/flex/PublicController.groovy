@@ -1,6 +1,9 @@
 package se.metricspace.flex
 
 class PublicController {
+    def contacts() {
+    }
+
     def index() {
     }
 

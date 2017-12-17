@@ -3,6 +3,9 @@ package se.metricspace.flex
 class CalenderController {
     DateService dateService
 
+    def caladmin() {
+    }
+
     def index() {
         String selectedMonth = (params.month)?: Date.newInstance().format('yyyy-MM')
         List<String> months = dateService.getCalenderMonths()

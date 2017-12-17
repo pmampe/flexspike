@@ -18,28 +18,23 @@
         <div class="navbar-header">
           <a class="navbar-brand" href="/">Flex</a>
         </div>
-        <g:if test="${session.sessionUser.getRole()==se.metricspace.flex.Role.CALADMIN ||session.sessionUser.getRole()==se.metricspace.flex.Role.SYSADMIN}">
           <ul class="nav navbar-nav">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Funtioner <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><g:link controller="calender" action="index">KalenderAdmin</g:link></li>
-                <g:if test="${session.sessionUser.getRole()==se.metricspace.flex.Role.SYSADMIN}">
-                  <li><g:link controller="admin" action="index">Admin</g:link></li>
-                </g:if>
-              </ul>
-            </li>
+            <li><g:link controller="calender" action="index" title="Visa Kalender">SU Kalender</g:link></li>
+            <li><g:link controller="dashboard" action="workRate" title="Hantera eventuell deltid">Deltid</g:link></li>
+            <li><g:link controller="public" action="contacts" title="Kontakter">Kontakter</g:link></li>
+            <g:if test="${session.sessionUser.getRole()==se.metricspace.flex.Role.SYSADMIN||session.sessionUser.getRole()==se.metricspace.flex.Role.CALADMIN}">
+                <li><g:link controller="calender" action="caladmin">KalenderAdmin</g:link></li>
+            </g:if>
+            <g:if test="${session.sessionUser.getRole()==se.metricspace.flex.Role.SYSADMIN}">
+                <li><g:link controller="admin" action="index">Admin</g:link></li>
+            </g:if>
+            <g:if test="${session.realUser}">
+                <li><g:link controller="public" action="unsudo">Un-Sudo from ${session.sessionUser.eppn}</g:link></li>
+            </g:if>
           </ul>
-        </g:if>
-        <g:if test="${session.realUser}">
-          <ul class="nav navbar-nav">
-              <li><g:link controller="public" action="unsudo">Un-Sudo</g:link></li>
-          </ul>
-        </g:if>
       </div>
     </nav>
-    <div class="container">
-      <g:layoutBody/>
-    </div>
+    <g:layoutBody/>
+    <div class="footer" role="contentinfo">Stockholms universitet, SE-106 91 Stockholm | Tfn: 08-16 20 00 | <a href="http://www.su.se/kontakt" title="Besöksadresser och fler kontaktuppgifter">Besöksadresser & fler kontaktuppgifter</a></div>
   </body>
 </html>

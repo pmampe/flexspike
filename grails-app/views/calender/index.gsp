@@ -27,9 +27,9 @@
                                 <g:each in="${flexDates}" var="flexDate">
                                     <tr>
                                         <td><g:formatDate date="${flexDate.date}" format="yyyy-MM-dd"/></td>
-                                        <td>${flexDate.startHour}</td>
-                                        <td>${flexDate.endHour}</td>
-                                        <td>${flexDate.fullTime}</td>
+                                        <td><g:if test="${flexDate.fullTime<1}">Arbetsfri dag</g:if><g:else>0${flexDate.startHour}:00</g:else></td>
+                                        <td><g:if test="${flexDate.fullTime<1}">Arbetsfri dag</g:if><g:else>${flexDate.endHour}:00</g:else></td>
+                                        <td><g:if test="${flexDate.fullTime<1}">Arbetsfri dag</g:if><g:else><suflex:deltaTimeAsHHMM delta="${flexDate.fullTime}"/></g:else></td>
                                         <td>${flexDate.description}</td>
                                     </tr>
                                 </g:each>
