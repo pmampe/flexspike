@@ -14,6 +14,48 @@
       <div class="panel-body">
           <h3>Deltid</h3>
           <p>De som arbetar heltid behöver inte lägga in 100 procent som arbetsgrad, och ifall man är ledig (semester/tjänstledig/föräldraledig eller liknande) behöver man inte lägga in noll procent eftersom man inte förväntas rapportera flex under den perioden.</p>
+          <g:form action="workRate" method="post">
+              <div class="row">
+                  <div class="col-sm-4">
+                      <label for="startdate">Gäller från (yyyy-mm-dd):</label>
+                  </div>
+                  <div class="col-sm-8">
+                      <g:textField name="startdate" placeholder="yyyy-mm-dd" class="form-control"/>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-4">
+                      <label for="enddate">Gäller till (yyyy-mm-dd):</label>
+                  </div>
+                  <div class="col-sm-8">
+                      <g:textField name="enddate" placeholder="yyyy-mm-dd" class="form-control"/>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-4">
+                      <label for="workrate">Arbetsgrad (procent):</label>
+                  </div>
+                  <div class="col-sm-8">
+                      <g:textField name="workrate" class="form-control"/>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-4">
+                      <label for="comment">Kommentar:</label>
+                  </div>
+                  <div class="col-sm-8">
+                      <g:textField name="comment" class="form-control"/>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-4">
+                      &nbsp;
+                  </div>
+                  <div class="col-sm-8">
+                      <g:submitButton name="saveWorkRate" value="Spara arbetsgrad"/>
+                  </div>
+              </div>
+          </g:form>
           <g:if test="${workRates}">
               <table class="table table-bordered table-hover table-responsive table-striped">
                   <thead><tr><th>Start</th><th>Slut</th><th>Arbetsgrad</th><th>Kommentar</th></tr></thead>

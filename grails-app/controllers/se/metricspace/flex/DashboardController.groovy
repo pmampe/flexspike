@@ -82,8 +82,41 @@ class DashboardController {
     }
 
     def workRate() {
+        log.info "workRate: ${params}"
         SessionUser sessionUser = session.sessionUser
         User user = User.findByUid(sessionUser.getUid())
+        if(params.saveWorkRate) {
+            String startdate = params.startdate?.trim()
+            Date startDate = (startdate) ? Date.parse('yyyy-MM-dd', startdate) : null
+            String enddate = params.enddate?.trim()
+            Date endDate = (enddate) ? Date.parse('yyyy-MM-dd', enddate) : null
+            String workrate = params.workrate?.trim()
+            int workRate = 0
+            try {
+                workRate = (int) 100.0 *Double.parseDouble(workrate.replaceAll('%', ''))
+                if(workRate<0) {
+                    workRate = 0
+                }
+                if(workRate>10000) {
+                    workRate = 10000
+                }
+            } catch(Throwable exception) {
+                workRate = 0
+                log.warn "Some problem parsing workrate: ${exception.getMessage()}"
+            }
+
+            String comment = params.comment?.trim()
+            if(startDate && workRate>0) {
+                if(!user) {
+                    User.newInstance(uid:sessionUser.getUid()).save(flush:true, failOnError: true)
+                    user = User.findByUid(sessionUser.getUid())
+                }
+                FlexDate fd1 = FlexDate.findByDate(startDate)
+                FlexDate fd2 = FlexDate.findByDate(endDate)
+                log.info "lala"
+                WorkRate.newInstance(user: user, startDate: fd1, endDate: fd2, rate: workRate, rateMonday: workRate, rateTuesday: workRate, rateWednesday: workRate, rateThursday: workRate, rateFriday: workRate, comment: comment).save(flush: true, failOnError: true)
+            }
+        }
         List<WorkRate> workRates = WorkRate.findAllByUser(user, [sort: 'startDate', order: 'desc'])
         [workRates: workRates]
     }
