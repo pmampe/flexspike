@@ -96,6 +96,35 @@ var dashboardIndexModule = (function ( $ ) {
     });
   };
 
+  var initButtonLeft = function() {
+    $("input#left").unbind("click");
+    $("input#left").on("click", function(event) {
+        var flexdateid = $(this).data('flexdateid');
+        var endtime = $("input#end").val();
+        var reg = new RegExp('^[0-2][0-9]:[0-5][0-9]$');
+        console.log("Button clicked: came "+flexdateid+" / "+endtime+" / "+reg.test(endtime));
+        if(!reg.test(endtime)) {
+            endtime="";
+        }
+        $.ajax({
+            type: 'POST',
+            data: {id: flexdateid, endtime: endtime},
+            url: '/dashboard/reportEndTime',
+            success: function (data) {
+                console.log("success");
+                $("div#reportTime").html(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log("error");
+            },
+            complete: function() {
+                console.log("complete");
+                initReportFields();
+            }
+        });
+    });
+  };
+
   var initButtonLunch = function() {
     $("input#lunch").unbind("click");
     $("input#lunch").on("click", function(event) {
@@ -193,6 +222,7 @@ var dashboardIndexModule = (function ( $ ) {
 
   var initReportFields = function() {
       initButtonCame();
+      initButtonLeft();
       initButtonLunch();
       initInputComment();
       initInputEndTime();
@@ -219,6 +249,22 @@ var dashboardIndexModule = (function ( $ ) {
         console.log("EndTime: "+newValue+" / "+flexDateid+" / "+reg.test(newValue));
         if(reg.test(newValue)) {
             $("strong#message").text("");
+            $.ajax({
+                type: 'POST',
+                data: {id: flexDateid, endtime: newValue},
+                url: '/dashboard/reportEndTime',
+                success: function (data) {
+                    console.log("success");
+                    $("div#reportTime").html(data);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("error");
+                },
+                complete: function() {
+                    console.log("complete");
+                    initReportFields();
+                }
+            });
         } else {
             $("strong#message").text("EndTime has bad format ...");
         }

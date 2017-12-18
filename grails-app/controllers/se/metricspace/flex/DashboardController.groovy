@@ -19,6 +19,40 @@ class DashboardController {
         [adjustments: adjustments, dates: dates, flexDate: flexDate, reportedTime: reportedTime, reportedTimeDelta: reportedTimeDelta, timeAdjustmentSum: timeAdjustmentSum, user: user]
     }
 
+    def reportEndTime() {
+        FlexDate flexDate = (params.long('id')) ? FlexDate.get(params.long('id')) : null
+        if(!flexDate) {
+            response.status = 400
+            return render(text: "Missing flex date")
+        }
+        SessionUser sessionUser = session.sessionUser
+        User user = flexService.findOrCreateUser(sessionUser.uid)
+        ReportedTime reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)
+        if(!reportedTime) {
+            reportedTime = ReportedTime.newInstance(user: user, flexDate: flexDate)
+        }
+        String givenHHMM = (params.endtime?.trim()) ?: Date.newInstance().format("HH:mm")
+        int end = Integer.parseInt(givenHHMM.substring(0,2)) * 60 + Integer.parseInt(givenHHMM.substring(3))
+        if(end<361) {
+            end=361
+        }
+        if(end>1199) {
+            end=1200
+        }
+        reportedTime.endTime = end
+        if(reportedTime.endTime>reportedTime.startTime) {
+            reportedTime.dailyTotal = reportedTime.endTime-reportedTime.startTime -reportedTime.lunchLength
+            reportedTime.dailyDelta = reportedTime.dailyTotal - flexDate.fullTime
+        }
+        reportedTime.save(flush: true)
+        int timeAdjustmentSum = (user) ? userService.sumColFromTable(user.id, 'adjustment', 'time_adjustment') : 0
+        int reportedTimeDelta = (user) ? userService.sumColFromTable(user.id, 'daily_delta', 'reported_time') : 0
+        reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)
+        List<TimeAdjustment> adjustments = reportedTime?.getAdjustments()
+
+        return render(template: 'reportTime', model: [adjustments: adjustments, flexDate: flexDate, reportedTime: reportedTime, reportedTimeDelta: reportedTimeDelta, timeAdjustmentSum: timeAdjustmentSum])
+    }
+
     def reportLunchLength() {
         log.info "reportLunchLength: ${params}"
         FlexDate flexDate = (params.long('id')) ? FlexDate.get(params.long('id')) : null
@@ -38,6 +72,10 @@ class DashboardController {
             lunch=480
         }
         reportedTime.lunchLength = lunch
+        if(reportedTime.endTime>reportedTime.startTime) {
+            reportedTime.dailyTotal = reportedTime.endTime-reportedTime.startTime -reportedTime.lunchLength
+            reportedTime.dailyDelta = reportedTime.dailyTotal - flexDate.fullTime
+        }
         reportedTime.save(flush: true)
         int timeAdjustmentSum = (user) ? userService.sumColFromTable(user.id, 'adjustment', 'time_adjustment') : 0
         int reportedTimeDelta = (user) ? userService.sumColFromTable(user.id, 'daily_delta', 'reported_time') : 0
@@ -61,7 +99,6 @@ class DashboardController {
         }
         String givenHHMM = (params.starttime?.trim()) ?: Date.newInstance().format("HH:mm")
         int start = Integer.parseInt(givenHHMM.substring(0,2)) * 60 + Integer.parseInt(givenHHMM.substring(3))
-        log.info "prutti: "+start
         if(start<360) {
             start=360
         }
@@ -69,6 +106,10 @@ class DashboardController {
             start=1199
         }
         reportedTime.startTime = start
+        if(reportedTime.endTime>reportedTime.startTime) {
+            reportedTime.dailyTotal = reportedTime.endTime-reportedTime.startTime -reportedTime.lunchLength
+            reportedTime.dailyDelta = reportedTime.dailyTotal - flexDate.fullTime
+        }
         reportedTime.save(flush: true)
         int timeAdjustmentSum = (user) ? userService.sumColFromTable(user.id, 'adjustment', 'time_adjustment') : 0
         int reportedTimeDelta = (user) ? userService.sumColFromTable(user.id, 'daily_delta', 'reported_time') : 0
