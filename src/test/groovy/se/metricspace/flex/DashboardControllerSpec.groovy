@@ -6,6 +6,8 @@ import spock.lang.Specification
 class DashboardControllerSpec extends Specification implements ControllerUnitTest<DashboardController> {
 
     def setup() {
+        controller.dateService = Mock(DateService)
+        controller.flexService = Mock(FlexService)
         controller.userService = Mock(UserService)
     }
 
@@ -14,8 +16,10 @@ class DashboardControllerSpec extends Specification implements ControllerUnitTes
 
     void "test something useful"() {
         given:
+
         when:
         1+2
+
         then:
         1<2
     }

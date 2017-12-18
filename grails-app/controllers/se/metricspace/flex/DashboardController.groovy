@@ -2,6 +2,7 @@ package se.metricspace.flex
 
 class DashboardController {
     DateService dateService
+    FlexService flexService
     UserService userService
 
     def index() {
@@ -81,10 +82,24 @@ class DashboardController {
         return render(template: "showWorkRates", model: [workrates: workrates])
     }
 
-    def workRate() {
-        log.info "workRate: ${params}"
+    def timeAdjustment() {
+        log.info "timeAdjustment: ${params}"
         SessionUser sessionUser = session.sessionUser
+        if(params.saveTimeAdjustment && params.adjustment) {
+            String adjustment = params.adjustment?.trim()
+            int hh = Integer.parseInt(adjustment.substring(0, adjustment.indexOf(":")))
+            int mm = Integer.parseInt(adjustment.substring(1+adjustment.indexOf(":")))
+            int delta = (hh<0) ? (hh*60-mm) : (hh*60+mm)
+            String comment = params.comment?.trim()
+            TimeAdjustment.newInstance(user: flexService.findOrCreateUser(sessionUser.uid), adjustment: delta, comment: comment).save(flush: true, failOnError: true)
+        }
         User user = User.findByUid(sessionUser.getUid())
+        List<TimeAdjustment> timeAdjustments = TimeAdjustment.findAllByUser(user, [sort: 'dateCreated', order: 'desc'])
+        [timeAdjustments: timeAdjustments]
+    }
+
+    def workRate() {
+        SessionUser sessionUser = session.sessionUser
         if(params.saveWorkRate) {
             String startdate = params.startdate?.trim()
             Date startDate = (startdate) ? Date.parse('yyyy-MM-dd', startdate) : null
@@ -106,17 +121,9 @@ class DashboardController {
             }
 
             String comment = params.comment?.trim()
-            if(startDate && workRate>0) {
-                if(!user) {
-                    User.newInstance(uid:sessionUser.getUid()).save(flush:true, failOnError: true)
-                    user = User.findByUid(sessionUser.getUid())
-                }
-                FlexDate fd1 = FlexDate.findByDate(startDate)
-                FlexDate fd2 = FlexDate.findByDate(endDate)
-                log.info "lala"
-                WorkRate.newInstance(user: user, startDate: fd1, endDate: fd2, rate: workRate, rateMonday: workRate, rateTuesday: workRate, rateWednesday: workRate, rateThursday: workRate, rateFriday: workRate, comment: comment).save(flush: true, failOnError: true)
-            }
+            flexService.addWorkRate(sessionUser.getUid(), startDate, endDate, workRate, comment)
         }
+        User user = User.findByUid(sessionUser.getUid())
         List<WorkRate> workRates = WorkRate.findAllByUser(user, [sort: 'startDate', order: 'desc'])
         [workRates: workRates]
     }
