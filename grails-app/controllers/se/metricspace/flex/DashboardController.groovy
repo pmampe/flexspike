@@ -19,6 +19,65 @@ class DashboardController {
         [adjustments: adjustments, dates: dates, flexDate: flexDate, reportedTime: reportedTime, reportedTimeDelta: reportedTimeDelta, timeAdjustmentSum: timeAdjustmentSum, user: user]
     }
 
+    def reportLunchLength() {
+        log.info "reportLunchLength: ${params}"
+        FlexDate flexDate = (params.long('id')) ? FlexDate.get(params.long('id')) : null
+        if(!flexDate) {
+            response.status = 400
+            return render(text: "Missing flex date")
+        }
+        SessionUser sessionUser = session.sessionUser
+        User user = flexService.findOrCreateUser(sessionUser.uid)
+        ReportedTime reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)
+        if(!reportedTime) {
+            reportedTime = ReportedTime.newInstance(user: user, flexDate: flexDate)
+        }
+        String givenHHMM = (params.lunchlength?.trim()) ?: "00:30"
+        int lunch = Integer.parseInt(givenHHMM.substring(0,2)) * 60 + Integer.parseInt(givenHHMM.substring(3))
+        if(lunch>479) {
+            lunch=480
+        }
+        reportedTime.lunchLength = lunch
+        reportedTime.save(flush: true)
+        int timeAdjustmentSum = (user) ? userService.sumColFromTable(user.id, 'adjustment', 'time_adjustment') : 0
+        int reportedTimeDelta = (user) ? userService.sumColFromTable(user.id, 'daily_delta', 'reported_time') : 0
+        reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)
+        List<TimeAdjustment> adjustments = reportedTime?.getAdjustments()
+
+        return render(template: 'reportTime', model: [adjustments: adjustments, flexDate: flexDate, reportedTime: reportedTime, reportedTimeDelta: reportedTimeDelta, timeAdjustmentSum: timeAdjustmentSum])
+    }
+
+    def reportStartTime() {
+        FlexDate flexDate = (params.long('id')) ? FlexDate.get(params.long('id')) : null
+        if(!flexDate) {
+            response.status = 400
+            return render(text: "Missing flex date")
+        }
+        SessionUser sessionUser = session.sessionUser
+        User user = flexService.findOrCreateUser(sessionUser.uid)
+        ReportedTime reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)
+        if(!reportedTime) {
+            reportedTime = ReportedTime.newInstance(user: user, flexDate: flexDate)
+        }
+        String givenHHMM = (params.starttime?.trim()) ?: Date.newInstance().format("HH:mm")
+        int start = Integer.parseInt(givenHHMM.substring(0,2)) * 60 + Integer.parseInt(givenHHMM.substring(3))
+        log.info "prutti: "+start
+        if(start<360) {
+            start=360
+        }
+        if(start>1199) {
+            start=1199
+        }
+        reportedTime.startTime = start
+        reportedTime.save(flush: true)
+        int timeAdjustmentSum = (user) ? userService.sumColFromTable(user.id, 'adjustment', 'time_adjustment') : 0
+        int reportedTimeDelta = (user) ? userService.sumColFromTable(user.id, 'daily_delta', 'reported_time') : 0
+        reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)
+        List<TimeAdjustment> adjustments = reportedTime?.getAdjustments()
+
+        return render(template: 'reportTime', model: [adjustments: adjustments, flexDate: flexDate, reportedTime: reportedTime, reportedTimeDelta: reportedTimeDelta, timeAdjustmentSum: timeAdjustmentSum])
+    }
+
     def selectOtherDate() {
         FlexDate flexDate = (params.long('id')) ? FlexDate.get(params.long('id')) : null
         SessionUser sessionUser = session.sessionUser

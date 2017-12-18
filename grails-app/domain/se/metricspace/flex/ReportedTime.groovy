@@ -24,15 +24,15 @@ class ReportedTime {
   }
 
   String formatEndTime() {
-    return se.metricspace.flex.TimeFormatHelper.toHHMMString(endTime)
+    return (endTime>0)?se.metricspace.flex.TimeFormatHelper.toHHMMString(endTime):""
   }
 
   String formatLunchLength() {
-    return se.metricspace.flex.TimeFormatHelper.toHHMMString(lunchLength)
+    return (lunchLength>0)?se.metricspace.flex.TimeFormatHelper.toHHMMString(lunchLength):""
   }
 
   String formatStartTime() {
-    return se.metricspace.flex.TimeFormatHelper.toHHMMString(startTime)
+    return (startTime>0)?se.metricspace.flex.TimeFormatHelper.toHHMMString(startTime):""
   }
 
   List<TimeAdjustment> getAdjustments() {

@@ -45,6 +45,35 @@ var dashboardIndexModule = (function ( $ ) {
     });
   };
 
+  var initButtonCame = function() {
+    $("input#came").unbind("click");
+    $("input#came").on("click", function(event) {
+        var flexdateid = $(this).data('flexdateid');
+        var starttime = $("input#start").val();
+        var reg = new RegExp('^[0-2][0-9]:[0-5][0-9]$');
+        console.log("Button clicked: came "+flexdateid+" / "+starttime+" / "+reg.test(starttime));
+        if(!reg.test(starttime)) {
+            starttime="";
+        }
+        $.ajax({
+            type: 'POST',
+            data: {id: flexdateid, starttime: starttime},
+            url: '/dashboard/reportStartTime',
+            success: function (data) {
+                console.log("success");
+                $("div#reportTime").html(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log("error");
+            },
+            complete: function() {
+                console.log("complete");
+                initReportFields();
+            }
+        });
+    });
+  };
+
   var initButtonLastMonth = function() {
     $("input#showLastMonth").unbind("click");
     $("input#showLastMonth").on("click", function(event) {
@@ -62,6 +91,35 @@ var dashboardIndexModule = (function ( $ ) {
             },
             complete: function() {
                 console.log("complete");
+            }
+        });
+    });
+  };
+
+  var initButtonLunch = function() {
+    $("input#lunch").unbind("click");
+    $("input#lunch").on("click", function(event) {
+        var flexdateid = $(this).data('flexdateid');
+        var lunchlength = $("input#lunch").val();
+        var reg = new RegExp('^[0-2][0-9]:[0-5][0-9]$');
+        console.log("Button clicked: lunch "+flexdateid+" / "+lunchlength+" / "+reg.test(lunchlength));
+        if(!reg.test(lunchlength)) {
+            lunchlength="";
+        }
+        $.ajax({
+            type: 'POST',
+            data: {id: flexdateid, lunchlength: lunchlength},
+            url: '/dashboard/reportLunchLength',
+            success: function (data) {
+                console.log("success");
+                $("div#reportTime").html(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log("error");
+            },
+            complete: function() {
+                console.log("complete");
+                initReportFields();
             }
         });
     });
@@ -133,6 +191,16 @@ var dashboardIndexModule = (function ( $ ) {
     });
   };
 
+  var initReportFields = function() {
+      initButtonCame();
+      initButtonLunch();
+      initInputComment();
+      initInputEndTime();
+      initInputLunchLength();
+      initInputStartTime();
+      initSelectDate();
+  };
+
   var initInputComment = function() {
     $("input#comment").unbind("blur");
     $("input#comment").on("blur", function (event) {
@@ -166,6 +234,23 @@ var dashboardIndexModule = (function ( $ ) {
         console.log("Lunch: "+newValue+" / "+flexDateid+" / "+reg.test(newValue));
         if(reg.test(newValue)) {
             $("strong#message").text("");
+            var flexdateid = $(this).data('flexdateid');
+            $.ajax({
+                    type: 'POST',
+                    data: {id: flexdateid, lunchlength: newValue},
+                    url: '/dashboard/reportLunchLength',
+                    success: function (data) {
+                        console.log("success");
+                        $("div#reportTime").html(data);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log("error");
+                    },
+                    complete: function() {
+                        console.log("complete");
+                        initReportFields();
+                    }
+            });
         } else {
             $("strong#message").text("LunchLength has bad format ...");
         }
@@ -181,6 +266,23 @@ var dashboardIndexModule = (function ( $ ) {
           console.log("StartTime: "+newValue+" / "+flexDateid+" / "+reg.test(newValue));
           if(reg.test(newValue)) {
               $("strong#message").text("");
+                var flexdateid = $(this).data('flexdateid');
+                $.ajax({
+                    type: 'POST',
+                    data: {id: flexdateid, starttime: newValue},
+                    url: '/dashboard/reportStartTime',
+                    success: function (data) {
+                        console.log("success");
+                        $("div#reportTime").html(data);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log("error");
+                    },
+                    complete: function() {
+                        console.log("complete");
+                        initReportFields();
+                    }
+                });
           } else {
               $("strong#message").text("StartTime has bad format ...");
           }
@@ -205,10 +307,7 @@ var dashboardIndexModule = (function ( $ ) {
             },
             complete: function() {
                 console.log("complete");
-                initInputComment();
-                initInputEndTime();
-                initInputLunchLength();
-                initInputStartTime();
+                initReportFields();
             }
         });
     });
@@ -221,7 +320,7 @@ var dashboardIndexModule = (function ( $ ) {
       initButtonMonthly();
       initButtonTimeAdjustments();
       initButtonWorkrates();
-      initSelectDate();
+      initReportFields();
   };
 
   return {initModule: initModule};
