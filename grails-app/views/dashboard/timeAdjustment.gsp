@@ -4,6 +4,7 @@
     <title>Justera - Flextid</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="layout" content="main"/>
+    <asset:javascript src="dashboard/timeAdjustment.js"/>
   </head>
 
   <body>
@@ -15,16 +16,22 @@
           <p>Om saldot ska minskas anges ett minustecken före antal timmar och minuter. Om saldot ska ökas anges ett plustecken före antal timmar och minuter.</p>
           <g:form action="timeAdjustment" method="post">
               <div class="row">
-                  <div class="col-sm-4">
+                  <div class="col-sm-2">
                       <label for="adjustment">Justering (HH:MM):</label>
                   </div>
+                  <div class="col-sm-2">
+                      <strong id="message" style="color: red;"></strong>
+                  </div>
                   <div class="col-sm-8">
-                      <g:textField name="adjustment" placeHolder="HH:MM" class="form-control"/>
+                      <g:textField name="adjustment" placeHolder="HH:MM" class="form-control" maxlength="7"/>
                   </div>
               </div>
               <div class="row">
-                  <div class="col-sm-4">
+                  <div class="col-sm-2">
                       <label for="comment">Kommentar:</label>
+                  </div>
+                  <div class="col-sm-2">
+                      &nbsp;
                   </div>
                   <div class="col-sm-8">
                       <g:textField name="comment" class="form-control"/>
@@ -35,7 +42,7 @@
                       &nbsp;
                   </div>
                   <div class="col-sm-8">
-                      <g:submitButton name="saveTimeAdjustment" value="Spara justering"/>
+                      <g:submitButton name="saveTimeAdjustment" value="Spara justering" disabled="${true}"/>
                   </div>
               </div>
           </g:form>

@@ -291,12 +291,16 @@ databaseChangeLog = {
   }
 
   changeSet(author: "mano3567", id: "1448278733528-14") {
-    dropTable(tableName: "absence")
-    dropTable(tableName: "agregatedtime")
     dropTable(tableName: "calendar")
     dropTable(tableName: "employee")
+  }
+/* drop the rest in a few months after prod ...
+  changeSet(author: "mano3567", id: "1448278733528-15") {
+    dropTable(tableName: "absence")
+    dropTable(tableName: "agregatedtime")
     dropTable(tableName: "reportedtime")
     dropTable(tableName: "timeadjustments")
     dropTable(tableName: "workrate")
   }
+  */
 }
