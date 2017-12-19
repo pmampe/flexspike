@@ -16,7 +16,7 @@ var dashboardTimeAdjustmentModule = (function ( $ ) {
         var reg1 = new RegExp('^[0-9][0-9]:[0-5][0-9]$');
         var reg2 = new RegExp('^[0-9][0-9][0-9]:[0-5][0-9]$');
         var checkValid = reg0.test(newValue)||reg1.test(newValue)||reg2.test(newValue);
-        console.log("EndTime: "+newValue+" // "+checkValid);
+        console.log("DeltaTime: "+newValue+" / "+checkValid);
         if(checkValid) {
             $("strong#message").text("");
             $("input#saveTimeAdjustment").prop('disabled', false);

@@ -202,9 +202,9 @@ class DashboardController {
         SessionUser sessionUser = session.sessionUser
         if(params.saveWorkRate) {
             String startdate = params.startdate?.trim()
-            Date startDate = (startdate) ? Date.parse('yyyy-MM-dd', startdate) : null
+            Date startDate = (startdate) ? Date.parse('yyyy-MM-dd', "20"+startdate) : null
             String enddate = params.enddate?.trim()
-            Date endDate = (enddate) ? Date.parse('yyyy-MM-dd', enddate) : null
+            Date endDate = (enddate) ? Date.parse('yyyy-MM-dd', "20"+enddate) : null
             String workrate = params.workrate?.trim()
             int workRate = 0
             try {
