@@ -81,12 +81,12 @@ databaseChangeLog = {
         constraints(nullable: "true")
       }
 
-      column(name: "end_date_id", type: "bigint") {
-        constraints(nullable: "true")
+      column(name: "end_date", type: "date") {
+        constraints(nullable: "false")
       }
 
-      column(name: "start_date_id", type: "bigint") {
-        constraints(nullable: "true")
+      column(name: "start_date", type: "date") {
+        constraints(nullable: "false")
       }
 
       column(name: "comment", type: "varchar(96)") {
@@ -125,8 +125,6 @@ databaseChangeLog = {
 
 
   changeSet(author: "mange", id: "1448278733528-4") {
-    addForeignKeyConstraint(baseColumnNames: "end_date_id", baseTableName: "work_rate", constraintName: "wr2fd1FK", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "flex_date", referencesUniqueColumn: "true")
-    addForeignKeyConstraint(baseColumnNames: "start_date_id", baseTableName: "work_rate", constraintName: "wr2fd2FK", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "flex_date", referencesUniqueColumn: "true")
     addForeignKeyConstraint(baseColumnNames: "user_id", baseTableName: "work_rate", constraintName: "wr2uFK", deferrable: "false", initiallyDeferred: "false", referencedColumnNames: "id", referencedTableName: "user", referencesUniqueColumn: "true")
   }
 
@@ -277,25 +275,26 @@ databaseChangeLog = {
     sql("insert into user (uid, version, date_created) select distinct(uid) as uid, 0, now() from reportedtime where datum>(adddate(curdate(), -1830));")
     sql("insert into flex_date(version, date_created, last_updated, date, description, start_hour, end_hour, full_time, updated_by_eppn) select 0, now(), now(), datum as date, description, mandstart as start_hour, mandend as end_hour, fulltime as full_time, 'flexuser@su.se' from calendar;")
     sql("insert into absent(version, date_created, last_updated, user_id, flex_date_id, start_time, length, comment) select 0, now(), now(), u.id as user_id, f.id as flex_date_id, a.absstart as start_time, a.abslength as length, a.comment from user u inner join absence a on a.uid=u.uid inner join flex_date f on f.date=a.datum;")
-    sql("insert into work_rate(version, date_created, last_updated, user_id, start_date_id, end_date_id, rate, rate_monday, rate_tuesday, rate_wednesday, rate_thursday, rate_friday) select 0, now(), now(), u.id as user_id, f1.id as start_date_id, f2.id as end_date_id, w.rate, w.morate, w.turate, w.werate, w.thrate, w.frrate from workrate w inner join user u on u.uid=w.uid left join flex_date f1 on f1.date=w.startdate left join flex_date f2 on f2.date=enddate;")
+    sql("insert into work_rate(version, date_created, last_updated, user_id, start_date, end_date, rate, rate_monday, rate_tuesday, rate_wednesday, rate_thursday, rate_friday) select 0, now(), now(), u.id as user_id, w.startdate, w.enddate, w.rate, w.morate, w.turate, w.werate, w.thrate, w.frrate from workrate w inner join user u on u.uid=w.uid left join flex_date f1 on f1.date=w.startdate left join flex_date f2 on f2.date=enddate;")
+    sql("delete from work_rate where rate = 0 and rate_monday = 0 and rate_tuesday = 0 and rate_wednesday = 0 and rate_thursday = 0 and rate_friday = 0;")
+    sql("delete from work_rate where rate = 10000 and rate_monday = 0 and rate_tuesday = 0 and rate_wednesday = 0 and rate_thursday = 0 and rate_friday = 0;")
+    sql("update work_rate set end_date='2049-12-31' where end_date > '2049-12-31';")
+    sql("update work_rate set rate_monday=rate, rate_tuesday=rate, rate_wednesday=rate, rate_thursday=rate, rate_friday=rate where rate_monday = 0 and rate_tuesday = 0 and rate_wednesday = 0 and rate_thursday = 0 and rate_friday = 0;")
     sql("insert into time_adjustment(version, date_created, comment, adjustment, user_id) select 0, t.datum, t.comment, t.delta, u.id as user_id from timeadjustments t inner join user u on u.uid=t.uid;")
     sql("insert into reported_time(version, date_created, last_updated, absent_all_day, comment, daily_delta, daily_total, end_time, flex_date_id, lunch_length, start_time, user_id) select 0, now(), now(), absentallday as absent_all_day, comment, dailydelta as daily_delta, dailytotal as daily_total, (endhour*60+endminute) as end_time, f.id as flex_date_id, lunchlength as lunch_length, (starthour*60+startminute) as start_time, u.id as user_id from reportedtime r inner join user u on u.uid=r.uid inner join flex_date f on f.date=r.datum;")
   }
 
   changeSet(author: "mano3567", id: "1448278733528-12") {
-    sql("update reported_time r inner join user u on u.id=r.user_id inner join flex_date f on f.id=r.flex_date_id inner join work_rate w on w.user_id=u.id and w.start_date_id<=f.id and w.end_date_id>=f.id set r.work_rate_id=w.id where w.start_date_id is not null and w.end_date_id is not null;")
+    sql("update reported_time r inner join user u on u.id=r.user_id inner join flex_date f on f.id=r.flex_date_id inner join work_rate w on w.user_id=u.id and w.start_date<=f.date and w.end_date>=f.date set r.work_rate_id=w.id where w.start_date is not null and w.end_date is not null;")
   }
 
   changeSet(author: "mano3567", id: "1448278733528-13") {
-    sql("update reported_time r inner join user u on u.id=r.user_id inner join flex_date f on f.id=r.flex_date_id inner join work_rate w on w.user_id=u.id and w.start_date_id<=f.id  set r.work_rate_id=w.id where w.start_date_id is not null and w.end_date_id is null;")
-  }
-
-  changeSet(author: "mano3567", id: "1448278733528-14") {
     dropTable(tableName: "calendar")
     dropTable(tableName: "employee")
   }
+
 /* drop the rest in a few months after prod ...
-  changeSet(author: "mano3567", id: "1448278733528-15") {
+  changeSet(author: "mano3567", id: "1448278733528-14") {
     dropTable(tableName: "absence")
     dropTable(tableName: "agregatedtime")
     dropTable(tableName: "reportedtime")

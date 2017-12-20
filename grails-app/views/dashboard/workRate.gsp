@@ -72,8 +72,8 @@
                   <tbody>
                     <g:each in="${workRates}" var="workRate">
                         <tr>
-                            <td><g:formatDate date="${workRate.startDate.date}" format="yyyy-MM-dd"/></td>
-                            <td><g:formatDate date="${workRate.endDate?.date}" format="yyyy-MM-dd"/></td>
+                            <td><g:formatDate date="${workRate.startDate}" format="yyyy-MM-dd"/></td>
+                            <td><g:formatDate date="${workRate.endDate}" format="yyyy-MM-dd"/></td>
                             <td>${workRate.getAverageRate()} %</td>
                             <td>${workRate.comment}</td>
                         </tr>

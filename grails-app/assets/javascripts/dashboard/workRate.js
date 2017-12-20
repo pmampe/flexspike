@@ -60,7 +60,7 @@ var dashboardWorkRateModule = (function ( $ ) {
                 }
             }
         } else {
-            $("strong#message0").text("Bad format");
+            $("strong#message2").text("Bad format");
             $("input#saveWorkRate").prop('disabled', true);
         }
     });
