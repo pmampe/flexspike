@@ -7,9 +7,14 @@
 * You're free to add application-wide styles to this file and they'll appear at the top of the
 * compiled file, but it's generally better to create a new file per style scope.
 *
+*= require normalize
 *= require bootstrap
-*= require grails
-*= require main
-*= require mobile
+*= require bootstrap-theme
+* require grails
+* require main
+* require mobile
 *= require_self
 */
+
+/* Bootstrap overrides */
+@import "bootstrap_misc";
