@@ -13,26 +13,32 @@
   </div>
 
   <div class="row">
+    <div class="col-sm-4"><label for="flexAllDay">Flexledig hel dag:</label></div>
+    <div class="col-sm-7"><g:checkBox name="flexAllDay" value="${reportedTime?.absentAllDay}" class="form-control" data-flexdateid="${flexDate.id}"/></div>
+    <div class="col-sm-1">&nbsp;</div>
+  </div>
+
+  <div class="row">
     <div class="col-sm-4"><label for="start">Kom (HH:MM):</label></div>
-    <div class="col-sm-7"><g:textField name="start" value="${reportedTime?.formatStartTime()}" placeHolder="HH:MM" class="form-control" data-flexdateid="${flexDate.id}" maxlength="5"/></div>
-    <div class="col-sm-1"><g:submitButton name="came" value="Kom" class="pull-right" data-flexdateid="${flexDate.id}"/></div>
+    <div class="col-sm-7"><g:textField name="start" value="${reportedTime?.formatStartTime()}" placeHolder="HH:MM" class="form-control" data-flexdateid="${flexDate.id}" maxlength="5" disabled="${reportedTime?.absentAllDay}"/></div>
+    <div class="col-sm-1"><g:submitButton name="came" value="Kom" class="pull-right" data-flexdateid="${flexDate.id}" disabled="${reportedTime?.absentAllDay}"/></div>
   </div>
 
   <div class="row">
     <div class="col-sm-4"><label for="lunch">Lunch längd (HH:MM):</label></div>
-    <div class="col-sm-7"><g:textField name="lunch" value="${reportedTime?.formatLunchLength()}" placeHolder="HH:MM" class="form-control" data-flexdateid="${flexDate.id}" maxlength="5"/></div>
-    <div class="col-sm-1"><g:submitButton name="lunch" value="Lunch" class="pull-right" data-flexdateid="${flexDate.id}"/></div>
+    <div class="col-sm-7"><g:textField name="lunch" value="${reportedTime?.formatLunchLength()}" placeHolder="HH:MM" class="form-control" data-flexdateid="${flexDate.id}" maxlength="5" disabled="${reportedTime?.absentAllDay}"/></div>
+    <div class="col-sm-1"><g:submitButton name="lunch" value="Lunch" class="pull-right" data-flexdateid="${flexDate.id}" disabled="${reportedTime?.absentAllDay}"/></div>
   </div>
 
   <div class="row">
     <div class="col-sm-4"><label for="end">Gick (HH:MM):</label></div>
-    <div class="col-sm-7"><g:textField name="end" value="${reportedTime?.formatEndTime()}" placeHolder="HH:MM" class="form-control" data-flexdateid="${flexDate.id}" maxlength="5"/></div>
-    <div class="col-sm-1"><g:submitButton name="left" value="Gick" class="pull-right" data-flexdateid="${flexDate.id}"/></div>
+    <div class="col-sm-7"><g:textField name="end" value="${reportedTime?.formatEndTime()}" placeHolder="HH:MM" class="form-control" data-flexdateid="${flexDate.id}" maxlength="5" disabled="${reportedTime?.absentAllDay}"/></div>
+    <div class="col-sm-1"><g:submitButton name="left" value="Gick" class="pull-right" data-flexdateid="${flexDate.id}" disabled="${reportedTime?.absentAllDay}"/></div>
   </div>
 
   <div class="row">
-    <div class="col-sm-4"><label for="comment">Eventuell kommentar:</label></div>
-    <div class="col-sm-8"><g:textField name="comment" value="${reportedTime?.comment}" class="form-control" data-flexdateid="${flexDate.id}"/></div>
+    <div class="col-sm-4"><label for="comment4day">Eventuell kommentar:</label></div>
+    <div class="col-sm-8"><g:textField name="comment4day" value="${reportedTime?.comment}" class="form-control" data-flexdateid="${flexDate.id}"/></div>
   </div>
 </g:else>
 

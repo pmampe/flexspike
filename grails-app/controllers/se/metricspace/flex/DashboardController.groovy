@@ -19,6 +19,29 @@ class DashboardController {
         [adjustments: adjustments, dates: dates, flexDate: flexDate, reportedTime: reportedTime, reportedTimeDelta: reportedTimeDelta, timeAdjustmentSum: timeAdjustmentSum, user: user]
     }
 
+    def reportComment() {
+        FlexDate flexDate = (params.long('id')) ? FlexDate.get(params.long('id')) : null
+        if(!flexDate) {
+            response.status = 400
+            return render(text: "Missing flex date")
+        }
+        SessionUser sessionUser = session.sessionUser
+        User user = flexService.findOrCreateUser(sessionUser.uid)
+        ReportedTime reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)
+        if(!reportedTime) {
+            reportedTime = ReportedTime.newInstance(user: user, flexDate: flexDate)
+        }
+        String comment = params.comment?.trim()
+        reportedTime.comment = comment
+        reportedTime.save(flush: true)
+        int timeAdjustmentSum = (user) ? userService.sumColFromTable(user.id, 'adjustment', 'time_adjustment') : 0
+        int reportedTimeDelta = (user) ? userService.sumColFromTable(user.id, 'daily_delta', 'reported_time') : 0
+        reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)
+        List<TimeAdjustment> adjustments = reportedTime?.getAdjustments()
+
+        return render(template: 'reportTime', model: [adjustments: adjustments, flexDate: flexDate, reportedTime: reportedTime, reportedTimeDelta: reportedTimeDelta, timeAdjustmentSum: timeAdjustmentSum])
+    }
+
     def reportEndTime() {
         FlexDate flexDate = (params.long('id')) ? FlexDate.get(params.long('id')) : null
         if(!flexDate) {
@@ -53,8 +76,42 @@ class DashboardController {
         return render(template: 'reportTime', model: [adjustments: adjustments, flexDate: flexDate, reportedTime: reportedTime, reportedTimeDelta: reportedTimeDelta, timeAdjustmentSum: timeAdjustmentSum])
     }
 
+    def reportFullDayAbsence() {
+        log.info "reportFullDayAbsence: ${params}"
+        FlexDate flexDate = (params.long('id')) ? FlexDate.get(params.long('id')) : null
+        if(!flexDate) {
+            response.status = 400
+            return render(text: "Missing flex date")
+        }
+        boolean isChecked = params.boolean('isChecked')
+        SessionUser sessionUser = session.sessionUser
+        User user = flexService.findOrCreateUser(sessionUser.uid)
+        ReportedTime reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)
+        if(!reportedTime) {
+            reportedTime = ReportedTime.newInstance(user: user, flexDate: flexDate)
+        }
+        reportedTime.absentAllDay = isChecked
+        if(isChecked) {
+            reportedTime.dailyTotal = 0
+            reportedTime.startTime = 0
+            reportedTime.lunchLength = 0
+            reportedTime.endTime = 0
+            reportedTime.dailyDelta = -flexDate.fullTime
+            Absent.findAllByUserAndFlexDate(user, flexDate)*.delete(flush: true)
+        } else {
+            reportedTime.dailyDelta = 0
+        }
+
+        reportedTime.save(flush: true)
+        int timeAdjustmentSum = (user) ? userService.sumColFromTable(user.id, 'adjustment', 'time_adjustment') : 0
+        int reportedTimeDelta = (user) ? userService.sumColFromTable(user.id, 'daily_delta', 'reported_time') : 0
+        reportedTime = ReportedTime.findByUserAndFlexDate(user, flexDate)
+        List<TimeAdjustment> adjustments = reportedTime?.getAdjustments()
+
+        return render(template: 'reportTime', model: [adjustments: adjustments, flexDate: flexDate, reportedTime: reportedTime, reportedTimeDelta: reportedTimeDelta, timeAdjustmentSum: timeAdjustmentSum])
+    }
+
     def reportLunchLength() {
-        log.info "reportLunchLength: ${params}"
         FlexDate flexDate = (params.long('id')) ? FlexDate.get(params.long('id')) : null
         if(!flexDate) {
             response.status = 400

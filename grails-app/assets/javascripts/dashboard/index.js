@@ -220,23 +220,53 @@ var dashboardIndexModule = (function ( $ ) {
     });
   };
 
-  var initReportFields = function() {
-      initButtonCame();
-      initButtonLeft();
-      initButtonLunch();
-      initInputComment();
-      initInputEndTime();
-      initInputLunchLength();
-      initInputStartTime();
-      initSelectDate();
+  var initCheckBoxAllDay = function() {
+      $("input#flexAllDay").unbind("click");
+      $("input#flexAllDay").on("click", function(event) {
+          var flexDateid = $(this).data('flexdateid');
+          var isChecked = $(this).is(':checked')
+          console.log("Comment: "+isChecked+" / "+flexDateid);
+          $.ajax({
+              type: 'POST',
+              data: {id: flexDateid, isChecked: isChecked},
+              url: '/dashboard/reportFullDayAbsence',
+              success: function (data) {
+                  console.log("success");
+                  $("div#reportTime").html(data);
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  console.log("error");
+              },
+              complete: function() {
+                  console.log("complete");
+                  initReportFields();
+              }
+          });
+      });
   };
 
   var initInputComment = function() {
-    $("input#comment").unbind("blur");
-    $("input#comment").on("blur", function (event) {
+    $("input#comment4day").unbind("blur");
+    $("input#comment4day").on("blur", function (event) {
         var newValue = $(this).val();
         var flexDateid = $(this).data('flexdateid');
         console.log("Comment: "+newValue+" / "+flexDateid);
+        $.ajax({
+            type: 'POST',
+            data: {id: flexDateid, comment: newValue},
+            url: '/dashboard/reportComment',
+            success: function (data) {
+                console.log("success");
+                $("div#reportTime").html(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log("error");
+            },
+            complete: function() {
+                console.log("complete");
+                initReportFields();
+            }
+        });
     });
   };
 
@@ -357,6 +387,18 @@ var dashboardIndexModule = (function ( $ ) {
             }
         });
     });
+  };
+
+  var initReportFields = function() {
+        initButtonCame();
+        initButtonLeft();
+        initButtonLunch();
+        initCheckBoxAllDay();
+        initInputComment();
+        initInputEndTime();
+        initInputLunchLength();
+        initInputStartTime();
+        initSelectDate();
   };
 
   var initModule = function( $container ){
